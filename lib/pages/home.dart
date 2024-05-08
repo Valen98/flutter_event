@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event/components/event_card.dart';
 import 'package:event/components/my_navigation_bar.dart';
 import 'package:event/services/auth/auth_services.dart';
 import 'package:event/services/event/event_service.dart';
@@ -72,11 +73,7 @@ class _HomePageState extends State<HomePage> {
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Column(
-        children: [
-          Text(data['eventName']),
-          Text(data['eventDesc']),
-          Text(data['eventDate'].toDate().toString()),
-        ],
+        children: [EventCard(event: data)],
       ),
     );
   }

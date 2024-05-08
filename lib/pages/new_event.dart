@@ -17,14 +17,19 @@ class _NewEventPageState extends State<NewEventPage> {
   final eventDateController = TextEditingController();
   final eventHourController = TextEditingController();
   late DateTime _pickedDate;
-  late TimeOfDay _pickedHour;
+  late int _hour;
+  late int _minute;
 
   void postEvent() async {
     if (eventNameController.text.isNotEmpty &&
         eventDescriptionController.text.isNotEmpty &&
-        eventDateController.text.isNotEmpty) {
-      await _eventService.createEvent(eventNameController.text,
-          eventDescriptionController.text, _pickedDate, _pickedHour);
+        eventDateController.text.isNotEmpty &&
+        eventDateController.text.isNotEmpty &&
+        eventNameController.text.isNotEmpty) {
+      DateTime eventDate =
+          _pickedDate.add(Duration(hours: _hour, minutes: _minute));
+      await _eventService.createEvent(
+          eventNameController.text, eventDescriptionController.text, eventDate);
 
       Navigator.pop(context);
     }
@@ -171,7 +176,7 @@ class _NewEventPageState extends State<NewEventPage> {
     if (picked != null) {
       setState(() {
         eventDateController.text = picked.toString().split(" ")[0];
-        _pickedDate = picked;
+        _pickedDate = DateUtils.dateOnly(picked);
       });
     }
   }
@@ -182,9 +187,10 @@ class _NewEventPageState extends State<NewEventPage> {
 
     if (pickedHour != null) {
       setState(() {
+        _hour = pickedHour.hour;
+        _minute = pickedHour.minute;
         eventHourController.text =
             pickedHour.format(context).toString().split(' ')[0];
-        _pickedHour = pickedHour;
       });
     }
   }

@@ -8,8 +8,8 @@ class EventService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   //Create Event
-  Future<void> createEvent(String eventName, String eventDesc,
-      DateTime eventDate, TimeOfDay eventHours) async {
+  Future<void> createEvent(
+      String eventName, String eventDesc, DateTime eventDate) async {
     final String currentUserID = _firebaseAuth.currentUser!.uid;
     final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
     final Timestamp timestamp = Timestamp.now();
@@ -19,7 +19,6 @@ class EventService extends ChangeNotifier {
         eventName: eventName,
         eventDesc: eventDesc,
         eventDate: eventDate,
-        eventHours: eventHours,
         hostEmail: currentUserEmail,
         created: timestamp);
 
