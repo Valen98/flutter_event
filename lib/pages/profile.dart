@@ -1,6 +1,8 @@
-import 'package:event/model/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event/components/event_card.dart';
+import 'package:event/components/my_navigation_bar.dart';
+import 'package:event/services/event/event_service.dart';
 import 'package:event/services/profile_service/profile_service.dart';
-import 'package:event/utils/current_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -13,24 +15,19 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final ProfileService _profileService = ProfileService();
-  MyUser? currentUser = CurrentUser().user;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final EventService _eventService = EventService();
 
-  //final CurrentUser _currentUser = CurrentUser.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(),
       body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: currentUser != null
-              ? Column(
-                  children: [
-                    Text("Welcome ${currentUser!.displayName}"),
-                    Text("Email ${currentUser!.email}"),
-                    Text("uid ${currentUser!.uid}"),
-                  ],
-                )
-              : const Text("Not signed in")),
+          padding: EdgeInsets.all(8.0),
+          child: (Column(
+            children: [_buildProfile()],
+          ))),
+      bottomNavigationBar: const MyBottomNav(),
     );
   }
 
@@ -47,11 +44,166 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: const Color(0xff1D1D1D),
       elevation: 0,
       centerTitle: true,
-      //actions: [IconButton(onPressed: () {}), icon: const Icon(Icons.logout))],
+      actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.settings))],
     );
   }
 
-  /*Widget _buildProfile() {
-    return StreamBuilder(stream: _profileService.getProfile(''), builder: builder)
-  }*/
+  Widget _buildProfile() {
+    return StreamBuilder(
+        stream: _profileService.getProfile(_auth.currentUser!.uid),
+        builder: ((context, snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error + ${snapshot.error.toString()}');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text('Loeading..');
+          }
+
+          return profile(snapshot.data!);
+        }));
+  }
+
+  Widget profile(DocumentSnapshot data) {
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+            child: Row(
+              children: [
+                const SizedBox(height: 10),
+                Text(
+                  data['displayName'],
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 80),
+                _eventFollower(),
+                const SizedBox(
+                  width: 40,
+                ),
+                const Column(
+                  children: [
+                    Text(
+                      "0",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      'Friends',
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Bio',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at ex ac ligula interdum consequat nec a felis. Duis pulvinar tellus non rhoncus aliquet.',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Column(
+                  children: [
+                    const Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'My Events',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(
+                      color: Colors.black,
+                      thickness: 1,
+                    ),
+                    SizedBox(
+                      height: 465,
+                      child: _builderEventList(),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Column _eventFollower() {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          "0",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+        ),
+        Text(
+          'Events',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+      ],
+    );
+  }
+
+  Widget _builderEventList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _eventService.getEvents(_auth.currentUser!.uid),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Error');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text('Loading..');
+        }
+
+        return ListView(
+            children: snapshot.data!.docs
+                .map((document) => _buildEventItem(document))
+                .toList());
+      },
+    );
+  }
+
+  Widget _buildEventItem(DocumentSnapshot document) {
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 20,
+          ),
+          EventCard(event: data),
+        ],
+      ),
+    );
+  }
 }

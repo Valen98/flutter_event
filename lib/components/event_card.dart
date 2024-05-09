@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:event/pages/event_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {

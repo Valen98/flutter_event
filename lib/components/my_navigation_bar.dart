@@ -25,55 +25,54 @@ class _MyBottomNavState extends State<MyBottomNav> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(color: Color(0xff1D1D1D)),
+      height: 80,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SafeArea(
-          child: Row(
-            children: [
-              IconButton(
-                  iconSize: 40,
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()));
-                  },
-                  icon: const Icon(
-                    Icons.home,
-                    color: Colors.white,
-                  )),
-              const SizedBox(
-                width: 50,
-              ),
-              IconButton(
-                  iconSize: 40,
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const NewEventPage()));
-                  },
-                  icon: const Icon(
-                    Icons.event,
-                    color: Colors.white,
-                  )),
-              const SizedBox(
-                width: 50,
-              ),
-              IconButton(
-                  iconSize: 40,
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProfilePage()));
-                  },
-                  icon: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  )),
-            ],
-          ),
+        child: Row(
+          children: [
+            IconButton(
+                iconSize: 40,
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HomePage()));
+                },
+                icon: const Icon(
+                  Icons.home,
+                  color: Colors.white,
+                )),
+            const SizedBox(
+              width: 50,
+            ),
+            IconButton(
+                iconSize: 40,
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NewEventPage()));
+                },
+                icon: const Icon(
+                  Icons.event,
+                  color: Colors.white,
+                )),
+            const SizedBox(
+              width: 50,
+            ),
+            IconButton(
+                iconSize: 40,
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProfilePage()));
+                },
+                icon: const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                )),
+          ],
         ),
       ),
     );
