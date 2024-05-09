@@ -57,6 +57,13 @@ class AuthService extends ChangeNotifier {
         'displayName': displayName
       });
 
+      // Create a public user table to find users
+      _fireStore.collection('publicUser').doc(displayName).set({
+        'displayName': displayName,
+        'uid': userCredential.user!.uid,
+        'email': email
+      });
+
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw Exception(e.code);

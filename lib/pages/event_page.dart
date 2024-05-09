@@ -1,4 +1,6 @@
+import 'package:event/components/my_button.dart';
 import 'package:event/components/my_navigation_bar.dart';
+import 'package:event/pages/event_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -43,7 +45,19 @@ class _EventPageState extends State<EventPage> {
                   widget.event['eventDesc'],
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.w500),
-                )
+                ),
+                Text(widget.event['eventID']),
+                MyButton(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EventChatPage(
+                                  hostID: widget.event['hostID'],
+                                  eventID: widget.event['eventID'])));
+                    },
+                    bgColor: Colors.blue,
+                    text: 'Chat')
               ],
             ),
           ),

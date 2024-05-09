@@ -20,13 +20,16 @@ class EventService extends ChangeNotifier {
         eventDesc: eventDesc,
         eventDate: eventDate,
         hostEmail: currentUserEmail,
-        created: timestamp);
+        created: timestamp,
+        eventID: "");
 
     await _firestore
         .collection('events')
         .doc('event_$currentUserID')
         .collection('event')
         .add(newEvent.toMap());
+
+    addIDsToDocuments(currentUserID);
   }
 
   Stream<QuerySnapshot> getEvents(String currentUserID) {
@@ -36,5 +39,34 @@ class EventService extends ChangeNotifier {
         .collection('event')
         .orderBy('eventDate', descending: false)
         .snapshots();
+  }
+
+  DocumentReference<Map<String, dynamic>> getEvent(
+      String currentUserID, String eventID) {
+    return _firestore
+        .collection('events')
+        .doc('event_$currentUserID')
+        .collection('event')
+        .doc(eventID);
+  }
+
+  void addIDsToDocuments(String currentUserID) async {
+    // Reference to your Firestore collection
+    CollectionReference collectionRef = FirebaseFirestore.instance
+        .collection('events')
+        .doc('event_$currentUserID')
+        .collection('event');
+
+    // Retrieve all documents in the collection
+    QuerySnapshot querySnapshot = await collectionRef.get();
+
+    // Iterate over each document
+    querySnapshot.docs.forEach((doc) async {
+      // Get the ID of the document
+      String eventID = doc.id;
+
+      // Update the document to include the ID as a field
+      await collectionRef.doc(eventID).update({'eventID': eventID});
+    });
   }
 }

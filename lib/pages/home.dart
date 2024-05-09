@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           fontSize: 24,
         ),
       ),
-      backgroundColor: const Color(0xff1D1D1D),
+      backgroundColor: const Color(0xff1D1D1D).withOpacity(0.8),
       elevation: 0,
       centerTitle: true,
       actions: [IconButton(onPressed: signOut, icon: const Icon(Icons.logout))],
