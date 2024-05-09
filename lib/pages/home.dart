@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/event_card.dart';
-import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_navigation_bar.dart';
 import 'package:event/services/auth/auth_services.dart';
 import 'package:event/services/event/event_service.dart';
@@ -26,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(),
+      appBar: appBar(),
       body: _builderEventList(),
       bottomNavigationBar: const MyBottomNav(),
     );

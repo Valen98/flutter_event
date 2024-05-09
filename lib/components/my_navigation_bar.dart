@@ -56,7 +56,22 @@ class _MyBottomNavState extends State<MyBottomNav> {
                   icon: const Icon(
                     Icons.event,
                     color: Colors.white,
-                  ))
+                  )),
+              const SizedBox(
+                width: 50,
+              ),
+              IconButton(
+                  iconSize: 40,
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProfilePage()));
+                  },
+                  icon: const Icon(
+                    Icons.person,
+                    color: Colors.white,
+                  )),
             ],
           ),
         ),
