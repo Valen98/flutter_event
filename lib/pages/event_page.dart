@@ -34,7 +34,7 @@ class _EventPageState extends State<EventPage> {
                       fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  (dateFormat.format(widget.event['eventDate'].toDate())),
+                  "When: ${dateFormat.format(widget.event['eventDate'].toDate())}",
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.w300),
                 ),
@@ -46,7 +46,6 @@ class _EventPageState extends State<EventPage> {
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.w500),
                 ),
-                Text(widget.event['eventID']),
                 MyButton(
                     onTap: () {
                       Navigator.push(
@@ -63,7 +62,6 @@ class _EventPageState extends State<EventPage> {
           ),
         ),
       ),
-      bottomNavigationBar: const MyBottomNav(),
     );
   }
 

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/event_card.dart';
 import 'package:event/components/my_navigation_bar.dart';
+import 'package:event/pages/new_event.dart';
+import 'package:event/pages/profile.dart';
 import 'package:event/services/auth/auth_services.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,13 +24,37 @@ class _HomePageState extends State<HomePage> {
     authService.signOut();
   }
 
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(),
-      body: _builderEventList(),
-      bottomNavigationBar: const MyBottomNav(),
+      body: _getBody(_selectedIndex),
+      bottomNavigationBar: MyNavBar2(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
     );
+  }
+
+  Widget _getBody(int index) {
+    switch (index) {
+      case 0:
+        return _builderEventList();
+      case 1:
+        return const NewEventPage();
+      case 2:
+        return const ProfilePage();
+      default:
+        return Container();
+    }
   }
 
   AppBar appBar() {
@@ -57,7 +83,12 @@ class _HomePageState extends State<HomePage> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading..');
+          return const Center(
+            child: CircularProgressIndicator(
+              value: null,
+              semanticsLabel: 'Loading',
+            ),
+          );
         }
 
         return ListView(

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/event_card.dart';
-import 'package:event/components/my_navigation_bar.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:event/services/profile_service/profile_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,14 +19,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar(),
-      body: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: (Column(
-            children: [_buildProfile()],
-          ))),
-      bottomNavigationBar: const MyBottomNav(),
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: (Column(
+        children: [_buildProfile()],
+      )),
     );
   }
 
@@ -57,7 +53,12 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Loeading..');
+            return const Center(
+              child: CircularProgressIndicator(
+                value: null,
+                semanticsLabel: 'Loading',
+              ),
+            );
           }
 
           return profile(snapshot.data!);
@@ -82,24 +83,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(width: 80),
-                _eventFollower(),
+                _eventNr(),
                 const SizedBox(
                   width: 40,
                 ),
-                const Column(
-                  children: [
-                    Text(
-                      "0",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                    ),
-                    Text(
-                      'Friends',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                )
+                _followerNr()
               ],
             ),
           ),
@@ -123,30 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Column(
-                  children: [
-                    const Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'My Events',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Divider(
-                      color: Colors.black,
-                      thickness: 1,
-                    ),
-                    SizedBox(
-                      height: 465,
-                      child: _builderEventList(),
-                    )
-                  ],
-                ),
+                myEvents(),
               ],
             ),
           ),
@@ -155,7 +120,49 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Column _eventFollower() {
+  Column _followerNr() {
+    return const Column(
+      children: [
+        Text(
+          "0",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+        ),
+        Text(
+          'Friends',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+      ],
+    );
+  }
+
+  Column myEvents() {
+    return Column(
+      children: [
+        const Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              'My Events',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const Divider(
+          color: Colors.black,
+          thickness: 1,
+        ),
+        SizedBox(
+          height: 425,
+          child: _builderEventList(),
+        )
+      ],
+    );
+  }
+
+  Column _eventNr() {
     return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,

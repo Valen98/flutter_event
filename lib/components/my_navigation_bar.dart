@@ -1,80 +1,31 @@
-import 'package:event/pages/home.dart';
-import 'package:event/pages/new_event.dart';
-import 'package:event/pages/profile.dart';
-import 'package:event/pages/search.dart';
 import 'package:flutter/material.dart';
 
-class MyBottomNav extends StatefulWidget {
-  const MyBottomNav({super.key});
-
-  @override
-  State<MyBottomNav> createState() => _MyBottomNavState();
-}
-
-class _MyBottomNavState extends State<MyBottomNav> {
-  final Color selectedColor = const Color(0xff533AC7);
-
-  List<Widget> pageList = [
-    const HomePage(),
-    const SearchPage(),
-    const NewEventPage(),
-    const ProfilePage()
-  ];
+class MyNavBar2 extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onItemTapped;
+  const MyNavBar2(
+      {super.key, required this.selectedIndex, required this.onItemTapped});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(color: Color(0xff1D1D1D)),
-      height: 80,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            IconButton(
-                iconSize: 40,
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HomePage()));
-                },
-                icon: const Icon(
-                  Icons.home,
-                  color: Colors.white,
-                )),
-            const SizedBox(
-              width: 50,
-            ),
-            IconButton(
-                iconSize: 40,
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NewEventPage()));
-                },
-                icon: const Icon(
-                  Icons.event,
-                  color: Colors.white,
-                )),
-            const SizedBox(
-              width: 50,
-            ),
-            IconButton(
-                iconSize: 40,
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProfilePage()));
-                },
-                icon: const Icon(
-                  Icons.person,
-                  color: Colors.white,
-                )),
-          ],
-        ),
-      ),
-    );
+    return NavigationBar(
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        selectedIndex: selectedIndex,
+        onDestinationSelected: onItemTapped,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.event),
+            label: 'Create event',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          )
+        ]);
   }
 }
