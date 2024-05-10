@@ -116,6 +116,7 @@ class _EventChatPageState extends State<EventChatPage> {
             controller: _messageController,
             hintText: 'Enter message',
             obscureText: false,
+            readOnly: false,
           ),
         ),
         IconButton(onPressed: sendMessage, icon: const Icon(Icons.arrow_upward))

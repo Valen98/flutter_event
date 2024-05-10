@@ -62,16 +62,20 @@ class _LoginPageState extends State<LoginPage> {
                 height: 15,
               ),
               MyTextField(
-                  controller: emailController,
-                  hintText: 'Email',
-                  obscureText: false),
+                controller: emailController,
+                hintText: 'Email',
+                obscureText: false,
+                readOnly: false,
+              ),
               const SizedBox(
                 height: 25,
               ),
               MyTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true),
+                controller: passwordController,
+                hintText: 'Password',
+                obscureText: true,
+                readOnly: false,
+              ),
               const SizedBox(
                 height: 25,
               ),

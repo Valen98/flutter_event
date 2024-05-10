@@ -15,7 +15,7 @@ class _NewEventPageState extends State<NewEventPage> {
   final eventNameController = TextEditingController();
   final eventDescriptionController = TextEditingController();
   final eventDateController = TextEditingController();
-  final eventHourController = TextEditingController();
+  final eventTimeController = TextEditingController();
   late DateTime _pickedDate;
   late int _hour;
   late int _minute;
@@ -24,7 +24,7 @@ class _NewEventPageState extends State<NewEventPage> {
     if (eventNameController.text.isNotEmpty &&
         eventDescriptionController.text.isNotEmpty &&
         eventDateController.text.isNotEmpty &&
-        eventDateController.text.isNotEmpty &&
+        eventTimeController.text.isNotEmpty &&
         eventNameController.text.isNotEmpty) {
       DateTime eventDate =
           _pickedDate.add(Duration(hours: _hour, minutes: _minute));
@@ -48,29 +48,19 @@ class _NewEventPageState extends State<NewEventPage> {
             controller: eventNameController,
             hintText: 'Event name',
             obscureText: false,
+            readOnly: false,
           ),
           const SizedBox(
             height: 25,
           ),
 
           //Max lines null Long text input field
-          TextField(
+          MyTextField(
             controller: eventDescriptionController,
+            hintText: 'Event Description',
             obscureText: false,
+            readOnly: false,
             maxLines: null,
-            decoration: const InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                fillColor: Color(0xff2E2E2E),
-                filled: true,
-                hintText: 'Event Description',
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                )),
           ),
 
           const SizedBox(
@@ -80,22 +70,11 @@ class _NewEventPageState extends State<NewEventPage> {
             children: [
               //DatePicker
               Expanded(
-                child: TextField(
+                child: MyTextField(
                   controller: eventDateController,
-                  decoration: const InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      fillColor: Color(0xff2E2E2E),
-                      filled: true,
-                      labelText: 'Date',
-                      prefixIcon: Icon(Icons.calendar_today),
-                      hintStyle: TextStyle(
-                        color: Colors.green,
-                      )),
+                  hintText: 'Date',
+                  obscureText: false,
+                  prefixIcon: const Icon(Icons.calendar_today),
                   readOnly: true,
                   onTap: () {
                     _selectDate();
@@ -108,22 +87,11 @@ class _NewEventPageState extends State<NewEventPage> {
 
               //TimePicker
               Expanded(
-                child: TextField(
-                  controller: eventHourController,
-                  decoration: const InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      fillColor: Color(0xff2E2E2E),
-                      filled: true,
-                      labelText: 'Time',
-                      prefixIcon: Icon(Icons.punch_clock),
-                      hintStyle: TextStyle(
-                        color: Colors.green,
-                      )),
+                child: MyTextField(
+                  controller: eventTimeController,
+                  hintText: 'Date',
+                  obscureText: false,
+                  prefixIcon: const Icon(Icons.calendar_today),
                   readOnly: true,
                   onTap: () {
                     _selectHours();
@@ -199,7 +167,7 @@ class _NewEventPageState extends State<NewEventPage> {
       setState(() {
         _hour = pickedHour.hour;
         _minute = pickedHour.minute;
-        eventHourController.text =
+        eventTimeController.text =
             pickedHour.format(context).toString().split(' ')[0];
       });
     }
