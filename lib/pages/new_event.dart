@@ -76,71 +76,84 @@ class _NewEventPageState extends State<NewEventPage> {
           const SizedBox(
             height: 25,
           ),
+          Row(
+            children: [
+              //DatePicker
+              Expanded(
+                child: TextField(
+                  controller: eventDateController,
+                  decoration: const InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      fillColor: Color(0xff2E2E2E),
+                      filled: true,
+                      labelText: 'Date',
+                      prefixIcon: Icon(Icons.calendar_today),
+                      hintStyle: TextStyle(
+                        color: Colors.green,
+                      )),
+                  readOnly: true,
+                  onTap: () {
+                    _selectDate();
+                  },
+                ),
+              ),
+              const SizedBox(
+                width: 25,
+              ),
 
-          //DatePicker
-          TextField(
-            controller: eventDateController,
-            decoration: const InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
+              //TimePicker
+              Expanded(
+                child: TextField(
+                  controller: eventHourController,
+                  decoration: const InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      fillColor: Color(0xff2E2E2E),
+                      filled: true,
+                      labelText: 'Time',
+                      prefixIcon: Icon(Icons.punch_clock),
+                      hintStyle: TextStyle(
+                        color: Colors.green,
+                      )),
+                  readOnly: true,
+                  onTap: () {
+                    _selectHours();
+                  },
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                fillColor: Color(0xff2E2E2E),
-                filled: true,
-                labelText: 'DATE',
-                prefixIcon: Icon(Icons.calendar_today),
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                )),
-            readOnly: true,
-            onTap: () {
-              _selectDate();
-            },
+              ),
+            ],
           ),
+
           const SizedBox(
             height: 25,
           ),
-
-          //TimePicker
-          TextField(
-            controller: eventHourController,
-            decoration: const InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                fillColor: Color(0xff2E2E2E),
-                filled: true,
-                labelText: 'Time',
-                prefixIcon: Icon(Icons.punch_clock),
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                )),
-            readOnly: true,
-            onTap: () {
-              _selectHours();
-            },
-          ),
-
-          const SizedBox(
-            height: 50,
-          ),
-
-          MyButton(
-              onTap: postEvent,
-              bgColor: const Color(0xff228E28),
-              text: 'Create event'),
-
-          const SizedBox(
-            height: 25,
-          ),
-
-          MyButton(
-              onTap: () {}, bgColor: const Color(0xffC92A2A), text: 'Cancel')
+          Row(
+            children: [
+              Expanded(
+                  child: MyButton(
+                      onTap: () {},
+                      bgColor: const Color(0xffC92A2A),
+                      text: 'Cancel')),
+              const SizedBox(
+                width: 25,
+              ),
+              Expanded(
+                child: MyButton(
+                    onTap: postEvent,
+                    bgColor: const Color(0xff228E28),
+                    text: 'Create event'),
+              )
+            ],
+          )
         ],
       ),
     );
