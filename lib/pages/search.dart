@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_text_field.dart';
+import 'package:event/pages/profile.dart';
+import 'package:event/pages/public_profile.dart';
 import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -95,18 +97,27 @@ class _SearchPageState extends State<SearchPage> {
                     dynamic user = _resultList[index];
                     return Column(
                       children: [
-                        ListTile(
-                          title: Text(
-                            user['displayName'],
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          trailing: IconButton(
-                            onPressed: () {
-                              addFriend(user['uid']);
-                            },
-                            icon: const Icon(
-                              Icons.add_box,
-                              color: Color(0xff533AC7),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PublicProfilePage(
+                                        userID: user['uid'])));
+                          },
+                          child: ListTile(
+                            title: Text(
+                              user['displayName'],
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            trailing: IconButton(
+                              onPressed: () {
+                                addFriend(user['uid']);
+                              },
+                              icon: const Icon(
+                                Icons.add_box,
+                                color: Color(0xff533AC7),
+                              ),
                             ),
                           ),
                         ),

@@ -1,31 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:event/components/event_card.dart';
 import 'package:event/components/my_app_bar.dart';
-import 'package:event/services/event/event_service.dart';
+import 'package:event/components/my_button.dart';
 import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class PublicProfilePage extends StatefulWidget {
+  final String userID;
+  const PublicProfilePage({super.key, required this.userID});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<PublicProfilePage> createState() => _PublicProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _PublicProfilePageState extends State<PublicProfilePage> {
   final UserService _profileService = UserService();
+  final UserService _userService = UserService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final EventService _eventService = EventService();
   late DocumentSnapshot data;
+
+  void addFriend(String recieverID) {
+    _userService.addFriend(recieverID, _auth.currentUser!.uid);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
-          title: 'Profile', onPressed: () {}, icon: const Icon(Icons.settings)),
+      appBar: MyAppBar(title: 'Profile', onPressed: () {}),
       body: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: (Column(
           children: [_buildProfile()],
         )),
@@ -35,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildProfile() {
     return StreamBuilder(
-        stream: _profileService.getProfile(_auth.currentUser!.uid),
+        stream: _profileService.getProfile(widget.userID),
         builder: ((context, snapshot) {
           if (snapshot.hasError) {
             return Text('Error + ${snapshot.error.toString()}');
@@ -73,10 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(width: 80),
-                _eventNr(),
-                const SizedBox(
-                  width: 40,
-                ),
                 _followerNr(friends.length)
               ],
             ),
@@ -86,6 +85,12 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                MyButton(
+                    onTap: () {
+                      addFriend(data['uid']);
+                    },
+                    bgColor: Colors.blue,
+                    text: 'Add Friend'),
                 const Text(
                   'Bio',
                   style: TextStyle(
@@ -100,8 +105,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 20),
-                myEvents(),
               ],
             ),
           ),
@@ -122,101 +125,6 @@ class _ProfilePageState extends State<ProfilePage> {
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
       ],
-    );
-  }
-
-  Column myEvents() {
-    return Column(
-      children: [
-        const Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              'My Events',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const Divider(
-          color: Colors.black,
-          thickness: 1,
-        ),
-        SizedBox(
-          height: 425,
-          child: _builderEventList(),
-        )
-      ],
-    );
-  }
-
-  Column _eventNr() {
-    final eventsList = data['events'] as List<dynamic>;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          eventsList.length.toString(),
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-        ),
-        const Text(
-          'Events',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-      ],
-    );
-  }
-
-  Widget _builderEventList() {
-    return StreamBuilder<List<String>>(
-      stream: _eventService.getEventIDsFromUser(_auth.currentUser!.uid),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show loading indicator
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          List<String> eventIDs = snapshot.data ?? [];
-          return ListView.builder(
-            itemCount: eventIDs.length,
-            itemBuilder: (context, index) {
-              return StreamBuilder(
-                  stream: _eventService.getEvent(eventIDs[index]),
-                  builder: (contextx, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Show loading indicator
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      final eventDocument = snapshot.data?.data();
-                      // Check if eventDocument is not null before accessing its fields
-                      if (eventDocument != null) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              EventCard(event: eventDocument),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return const SizedBox(
-                          height: 1,
-                          width: 1,
-                        );
-                      }
-                    }
-                  });
-            },
-          );
-        }
-      },
     );
   }
 
