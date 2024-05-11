@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
-        const Divider(
+        Divider(
           color: Colors.black,
           thickness: 1,
         ),
@@ -180,6 +180,56 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _builderEventList() {
+    return StreamBuilder<List<String>>(
+      stream: _eventService.getEventIDsFromUser(_auth.currentUser!.uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Show loading indicator
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<String> eventIDs = snapshot.data ?? [];
+          return ListView.builder(
+            itemCount: eventIDs.length,
+            itemBuilder: (context, index) {
+              return StreamBuilder(
+                  stream: _eventService.getEvent(eventIDs[index]),
+                  builder: (contextx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(); // Show loading indicator
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      final eventDocument = snapshot.data?.data();
+                      // Check if eventDocument is not null before accessing its fields
+                      if (eventDocument != null) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              EventCard(event: eventDocument),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return const SizedBox(
+                          height: 1,
+                          width: 1,
+                        );
+                      }
+                    }
+                  });
+            },
+          );
+        }
+      },
+    );
+  }
+
+  /* Widget _builderEventList() {
     return StreamBuilder<QuerySnapshot>(
       stream: _eventService.getEvents(_auth.currentUser!.uid),
       builder: (context, snapshot) {
@@ -212,5 +262,5 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
-  }
+  } */
 }

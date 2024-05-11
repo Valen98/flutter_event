@@ -23,31 +23,57 @@ class EventService extends ChangeNotifier {
         created: timestamp,
         eventID: "");
 
+    DocumentReference eventRef =
+        await _firestore.collection('events').add(newEvent.toMap());
+
+    //Send in the ID of the event into event.
     await _firestore
         .collection('events')
-        .doc('event_$currentUserID')
-        .collection('event')
-        .add(newEvent.toMap());
+        .doc(eventRef.id)
+        .update({'eventID': eventRef.id});
+
+    await _firestore.collection('users').doc(currentUserID).update({
+      'events': FieldValue.arrayUnion([eventRef.id])
+    });
 
     addIDsToDocuments(currentUserID);
   }
 
-  Stream<QuerySnapshot> getEvents(String currentUserID) {
+  /* Stream<QuerySnapshot> getEvents(String currentUserID) {
     return _firestore
         .collection('events')
         .doc('event_$currentUserID')
         .collection('event')
         .orderBy('eventDate', descending: false)
         .snapshots();
+  }*/
+
+  Stream<List<String>> getEventIDsFromUser(String currentUserID) {
+    return _firestore
+        .collection('users')
+        .doc(currentUserID)
+        .snapshots()
+        .map((snapshot) {
+      List<String> eventIDs = [];
+      if (snapshot.exists) {
+        var data = snapshot.data();
+        if (data != null && data['events'] != null) {
+          // Extract array of event IDs from user document
+          List<dynamic> userEvents = data['events'];
+          eventIDs =
+              userEvents.cast<String>().toList(); // Convert to List<String>
+        }
+      }
+      return eventIDs;
+    });
   }
 
-  DocumentReference<Map<String, dynamic>> getEvent(
-      String currentUserID, String eventID) {
-    return _firestore
-        .collection('events')
-        .doc('event_$currentUserID')
-        .collection('event')
-        .doc(eventID);
+  Query<Map<String, dynamic>> getEvents(String eventID) {
+    return _firestore.collection('events').where('eventID', isEqualTo: eventID);
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getEvent(String eventID) {
+    return _firestore.collection('events').doc(eventID).snapshots();
   }
 
   void addIDsToDocuments(String currentUserID) async {

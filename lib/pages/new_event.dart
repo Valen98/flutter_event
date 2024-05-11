@@ -30,8 +30,6 @@ class _NewEventPageState extends State<NewEventPage> {
           _pickedDate.add(Duration(hours: _hour, minutes: _minute));
       await _eventService.createEvent(
           eventNameController.text, eventDescriptionController.text, eventDate);
-
-      Navigator.pop(context);
     }
   }
 
