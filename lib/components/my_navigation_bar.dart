@@ -19,13 +19,17 @@ class MyNavBar2 extends StatelessWidget {
             label: 'Home',
           ),
           NavigationDestination(
+              selectedIcon: Icon(Icons.search),
+              icon: Icon(Icons.search_outlined),
+              label: 'Search'),
+          NavigationDestination(
             icon: Icon(Icons.event),
             label: 'Create event',
           ),
           NavigationDestination(
             icon: Icon(Icons.person),
             label: 'Profile',
-          )
+          ),
         ]);
   }
 }

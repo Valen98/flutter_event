@@ -1,12 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/event_card.dart';
+import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_navigation_bar.dart';
 import 'package:event/pages/new_event.dart';
 import 'package:event/pages/profile.dart';
+import 'package:event/pages/search.dart';
 import 'package:event/services/auth/auth_services.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,7 +37,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
       body: _getBody(_selectedIndex),
       bottomNavigationBar: MyNavBar2(
         selectedIndex: _selectedIndex,
@@ -47,30 +48,28 @@ class _HomePageState extends State<HomePage> {
   Widget _getBody(int index) {
     switch (index) {
       case 0:
-        return _builderEventList();
+        return home();
       case 1:
-        return const NewEventPage();
+        return const SearchPage();
       case 2:
+        return const NewEventPage();
+      case 3:
         return const ProfilePage();
       default:
         return Container();
     }
   }
 
-  AppBar appBar() {
-    return AppBar(
-      title: const Text(
-        'Event App',
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 24,
+  Widget home() {
+    return Scaffold(
+      appBar: MyAppBar(
+        onPressed: signOut,
+        title: "Event App",
+        icon: const Icon(
+          Icons.logout,
         ),
       ),
-      backgroundColor: const Color(0xff1D1D1D).withOpacity(0.8),
-      elevation: 0,
-      centerTitle: true,
-      actions: [IconButton(onPressed: signOut, icon: const Icon(Icons.logout))],
+      body: _builderEventList(),
     );
   }
 
@@ -97,7 +96,9 @@ class _HomePageState extends State<HomePage> {
                     } else {
                       final eventDocument = snapshot.data?.data();
                       // Check if eventDocument is not null before accessing its fields
-                      if (eventDocument != null) {
+                      if (eventDocument == null) {
+                        return const Text("This should not exist");
+                      } else {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
@@ -108,11 +109,6 @@ class _HomePageState extends State<HomePage> {
                               EventCard(event: eventDocument),
                             ],
                           ),
-                        );
-                      } else {
-                        return const SizedBox(
-                          height: 1,
-                          width: 1,
                         );
                       }
                     }

@@ -1,6 +1,6 @@
 import 'package:event/components/my_button.dart';
-import 'package:event/components/my_navigation_bar.dart';
 import 'package:event/pages/event_chat.dart';
+import 'package:event/services/event/event_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -14,6 +14,7 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
   DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm");
+  final EventService _eventService = EventService();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,15 @@ class _EventPageState extends State<EventPage> {
                                   eventID: widget.event['eventID'])));
                     },
                     bgColor: Colors.blue,
-                    text: 'Chat')
+                    text: 'Chat'),
+                MyButton(
+                    onTap: () {
+                      _eventService.addUserToEvent(
+                          'Ly83iyupZdgiybe8lgYDPaHSz3b2',
+                          widget.event['eventID']);
+                    },
+                    bgColor: Colors.green,
+                    text: 'Invite person')
               ],
             ),
           ),
@@ -81,4 +90,6 @@ class _EventPageState extends State<EventPage> {
       actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.settings))],
     );
   }
+
+  // Make it possible to invite people.
 }

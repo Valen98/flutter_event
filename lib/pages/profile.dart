@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/event_card.dart';
+import 'package:event/components/my_app_bar.dart';
 import 'package:event/services/event/event_service.dart';
-import 'package:event/services/profile_service/profile_service.dart';
+import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -13,34 +14,22 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final ProfileService _profileService = ProfileService();
+  final UserService _profileService = UserService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final EventService _eventService = EventService();
+  late DocumentSnapshot data;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: (Column(
-        children: [_buildProfile()],
-      )),
-    );
-  }
-
-  AppBar appBar() {
-    return AppBar(
-      title: const Text(
-        'Event App',
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 24,
-        ),
+    return Scaffold(
+      appBar: MyAppBar(
+          title: 'Profile', onPressed: () {}, icon: const Icon(Icons.settings)),
+      body: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: (Column(
+          children: [_buildProfile()],
+        )),
       ),
-      backgroundColor: const Color(0xff1D1D1D),
-      elevation: 0,
-      centerTitle: true,
-      actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.settings))],
     );
   }
 
@@ -60,12 +49,12 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             );
           }
-
-          return profile(snapshot.data!);
+          data = snapshot.data!;
+          return profile();
         }));
   }
 
-  Widget profile(DocumentSnapshot data) {
+  Widget profile() {
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
-        Divider(
+        const Divider(
           color: Colors.black,
           thickness: 1,
         ),
@@ -163,15 +152,16 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Column _eventNr() {
-    return const Column(
+    final eventsList = data['events'] as List<dynamic>;
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          "0",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          eventsList.length.toString(),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
         ),
-        Text(
+        const Text(
           'Events',
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),

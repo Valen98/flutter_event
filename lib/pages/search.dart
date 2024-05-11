@@ -1,3 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event/components/my_app_bar.dart';
+import 'package:event/components/my_text_field.dart';
+import 'package:event/services/user/user_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatefulWidget {
@@ -8,10 +13,119 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final _searchUserController = TextEditingController();
+  final UserService _userService = UserService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  List _allUsers = [];
+  List _resultList = [];
+
+  @override
+  void initState() {
+    getAllUserStream();
+    _searchUserController.addListener(_onSearchChanged);
+    super.initState();
+  }
+
+  _onSearchChanged() {
+    searchResultList();
+  }
+
+  searchResultList() {
+    var showResult = [];
+    if (_searchUserController.text != "") {
+      for (var clientSnapshot in _allUsers) {
+        String name = clientSnapshot['displayName'].toString().toLowerCase();
+        if (name.contains(_searchUserController.text.toLowerCase())) {
+          showResult.add(clientSnapshot);
+        }
+      }
+    } else {
+      showResult = [];
+    }
+
+    setState(() {
+      _resultList = showResult;
+    });
+  }
+
+  getAllUserStream() async {
+    var data = await _userService.getAllUsers();
+
+    setState(() {
+      _allUsers = data.docs;
+    });
+
+    searchResultList();
+  }
+
+  @override
+  void dispose() {
+    _searchUserController.removeListener(_onSearchChanged);
+    _searchUserController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    getAllUserStream();
+    super.didChangeDependencies();
+  }
+
+  void addFriend(String recieverID) {
+    _userService.addFriend(recieverID, _auth.currentUser!.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Text("Search"),
+    return Scaffold(
+      appBar: const MyAppBar(title: 'Search for friends'),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            MyTextField(
+                controller: _searchUserController,
+                hintText: 'Search for user',
+                obscureText: false,
+                readOnly: false),
+            Expanded(
+              child: ListView.builder(
+                  itemCount: _resultList.length,
+                  itemBuilder: ((context, index) {
+                    dynamic user = _resultList[index];
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            user['displayName'],
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              addFriend(user['uid']);
+                            },
+                            icon: const Icon(
+                              Icons.add_box,
+                              color: Color(0xff533AC7),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  })),
+            )
+          ],
+        ),
+      ),
+
+      /* Column(children: [
+        
+        MyTextField(
+            controller: searchUserController,
+            hintText: 'Search User',
+            obscureText: false,
+            readOnly: false),
+      ]), */
     );
   }
 }

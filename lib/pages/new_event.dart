@@ -1,3 +1,4 @@
+import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_button.dart';
 import 'package:event/components/my_text_field.dart';
 import 'package:event/services/event/event_service.dart';
@@ -35,109 +36,96 @@ class _NewEventPageState extends State<NewEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 25,
-          ),
-          MyTextField(
-            controller: eventNameController,
-            hintText: 'Event name',
-            obscureText: false,
-            readOnly: false,
-          ),
-          const SizedBox(
-            height: 25,
-          ),
+    return Scaffold(
+      appBar: const MyAppBar(title: 'Create a new event!'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 25,
+            ),
+            MyTextField(
+              controller: eventNameController,
+              hintText: 'Event name',
+              obscureText: false,
+              readOnly: false,
+            ),
+            const SizedBox(
+              height: 25,
+            ),
 
-          //Max lines null Long text input field
-          MyTextField(
-            controller: eventDescriptionController,
-            hintText: 'Event Description',
-            obscureText: false,
-            readOnly: false,
-            maxLines: null,
-          ),
+            //Max lines null Long text input field
+            MyTextField(
+              controller: eventDescriptionController,
+              hintText: 'Event Description',
+              obscureText: false,
+              readOnly: false,
+              maxLines: null,
+            ),
 
-          const SizedBox(
-            height: 25,
-          ),
-          Row(
-            children: [
-              //DatePicker
-              Expanded(
-                child: MyTextField(
-                  controller: eventDateController,
-                  hintText: 'Date',
-                  obscureText: false,
-                  prefixIcon: const Icon(Icons.calendar_today),
-                  readOnly: true,
-                  onTap: () {
-                    _selectDate();
-                  },
+            const SizedBox(
+              height: 25,
+            ),
+            Row(
+              children: [
+                //DatePicker
+                Expanded(
+                  child: MyTextField(
+                    controller: eventDateController,
+                    hintText: 'Date',
+                    obscureText: false,
+                    prefixIcon: const Icon(Icons.calendar_today),
+                    readOnly: true,
+                    onTap: () {
+                      _selectDate();
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(
-                width: 25,
-              ),
-
-              //TimePicker
-              Expanded(
-                child: MyTextField(
-                  controller: eventTimeController,
-                  hintText: 'Date',
-                  obscureText: false,
-                  prefixIcon: const Icon(Icons.calendar_today),
-                  readOnly: true,
-                  onTap: () {
-                    _selectHours();
-                  },
+                const SizedBox(
+                  width: 25,
                 ),
-              ),
-            ],
-          ),
 
-          const SizedBox(
-            height: 25,
-          ),
-          Row(
-            children: [
-              Expanded(
+                //TimePicker
+                Expanded(
+                  child: MyTextField(
+                    controller: eventTimeController,
+                    hintText: 'Date',
+                    obscureText: false,
+                    prefixIcon: const Icon(Icons.calendar_today),
+                    readOnly: true,
+                    onTap: () {
+                      _selectHours();
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(
+              height: 25,
+            ),
+            Row(
+              children: [
+                Expanded(
+                    child: MyButton(
+                        onTap: () {},
+                        bgColor: const Color(0xffC92A2A),
+                        text: 'Cancel')),
+                const SizedBox(
+                  width: 25,
+                ),
+                Expanded(
                   child: MyButton(
-                      onTap: () {},
-                      bgColor: const Color(0xffC92A2A),
-                      text: 'Cancel')),
-              const SizedBox(
-                width: 25,
-              ),
-              Expanded(
-                child: MyButton(
-                    onTap: postEvent,
-                    bgColor: const Color(0xff228E28),
-                    text: 'Create event'),
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  AppBar appBar() {
-    return AppBar(
-      title: const Text(
-        'Create new Event',
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 24,
+                      onTap: postEvent,
+                      bgColor: const Color(0xff228E28),
+                      text: 'Create event'),
+                )
+              ],
+            )
+          ],
         ),
       ),
-      backgroundColor: const Color(0xff1D1D1D),
-      elevation: 0,
-      centerTitle: true,
     );
   }
 

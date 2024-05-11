@@ -76,6 +76,12 @@ class EventService extends ChangeNotifier {
     return _firestore.collection('events').doc(eventID).snapshots();
   }
 
+  void addUserToEvent(String userID, String eventID) async {
+    await _firestore.collection('users').doc(userID).update({
+      'events': FieldValue.arrayUnion([eventID])
+    });
+  }
+
   void addIDsToDocuments(String currentUserID) async {
     // Reference to your Firestore collection
     CollectionReference collectionRef = FirebaseFirestore.instance
