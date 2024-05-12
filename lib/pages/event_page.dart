@@ -1,6 +1,8 @@
 import 'package:event/components/my_button.dart';
 import 'package:event/pages/event_chat.dart';
 import 'package:event/services/event/event_service.dart';
+import 'package:event/services/user/user_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -14,7 +16,25 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
   DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm");
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final EventService _eventService = EventService();
+  final UserService _userService = UserService();
+  int _getNrOfFriends = 0;
+
+  @override
+  void initState() {
+    getNrOfFriends();
+    super.initState();
+  }
+
+  getNrOfFriends() async {
+    int getNrOfFriends =
+        await _userService.getNrOfFriends(_auth.currentUser!.uid);
+
+    setState(() {
+      _getNrOfFriends = getNrOfFriends;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +85,11 @@ class _EventPageState extends State<EventPage> {
                           widget.event['eventID']);
                     },
                     bgColor: Colors.green,
-                    text: 'Invite person')
+                    text: 'Invite person'),
+
+                    ListView.builder(itemCount:  _getNrOfFriends, itemBuilder: (context, index) {
+                        
+                    },)
               ],
             ),
           ),
