@@ -19,20 +19,25 @@ class _EventPageState extends State<EventPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final EventService _eventService = EventService();
   final UserService _userService = UserService();
-  int _getNrOfFriends = 0;
+  List<dynamic> friendsID = [];
 
   @override
   void initState() {
-    getNrOfFriends();
+    getFriendsID();
     super.initState();
   }
 
-  getNrOfFriends() async {
-    int getNrOfFriends =
-        await _userService.getNrOfFriends(_auth.currentUser!.uid);
+  void getFriendsID() async {
+    var data = await _userService.getFriendsFromID(_auth.currentUser!.uid);
 
     setState(() {
-      _getNrOfFriends = getNrOfFriends;
+      friendsID = data.data()!['friends'];
+    });
+  }
+
+  void addedFriend(String userID) {
+    setState(() {
+      friendsID.remove(userID);
     });
   }
 
@@ -80,21 +85,73 @@ class _EventPageState extends State<EventPage> {
                     text: 'Chat'),
                 MyButton(
                     onTap: () {
-                      _eventService.addUserToEvent(
-                          'Ly83iyupZdgiybe8lgYDPaHSz3b2',
-                          widget.event['eventID']);
+                      showModalBottomSheet(
+                          context: context,
+                          builder: ((context) {
+                            return _friendsList();
+                          }));
                     },
                     bgColor: Colors.green,
                     text: 'Invite person'),
-
-                    ListView.builder(itemCount:  _getNrOfFriends, itemBuilder: (context, index) {
-                        
-                    },)
+                //_friendsList(),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  //Future work: Make the friend removed from the list when the friend is added.
+  Column _friendsList() {
+    return Column(
+      children: [
+        Expanded(
+          child: Container(
+            color: const Color(0xff303335),
+            child: ListView.builder(
+              itemCount: friendsID.length,
+              itemBuilder: (context, index) {
+                dynamic friend = friendsID[index];
+
+                return StreamBuilder(
+                    stream: _userService.getProfile(friend),
+                    builder: ((context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Error + ${snapshot.error.toString()}');
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            value: null,
+                            semanticsLabel: 'Loading',
+                          ),
+                        );
+                      }
+                      var user = snapshot.data!;
+                      return ListTile(
+                          title: Text(
+                            user['displayName'],
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              _eventService.addUserToEvent(
+                                  user['uid'], widget.event['eventID']);
+                              addedFriend(user['uid']);
+                            },
+                            icon: const Icon(
+                              Icons.add_box,
+                              color: Color(0xff533AC7),
+                            ),
+                          ));
+                    }));
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 

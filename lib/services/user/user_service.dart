@@ -8,6 +8,11 @@ class UserService extends ChangeNotifier {
     return _firestore.collection('users').doc(uid).snapshots();
   }
 
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUsersFriendsIDs(
+      String uid) async {
+    return await _firestore.collection('users').doc(uid).get();
+  }
+
   Future<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
     return _firestore.collection('users').get();
   }

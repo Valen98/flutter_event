@@ -80,6 +80,9 @@ class EventService extends ChangeNotifier {
     await _firestore.collection('users').doc(userID).update({
       'events': FieldValue.arrayUnion([eventID])
     });
+    await _firestore.collection('events').doc(eventID).update({
+      'members': FieldValue.arrayUnion([userID])
+    });
   }
 
   void addIDsToDocuments(String currentUserID) async {
