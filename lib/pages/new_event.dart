@@ -26,14 +26,26 @@ class _NewEventPageState extends State<NewEventPage> {
     if (eventNameController.text.isNotEmpty &&
         eventDescriptionController.text.isNotEmpty &&
         eventDateController.text.isNotEmpty &&
-        eventTimeController.text.isNotEmpty &&
-        eventNameController.text.isNotEmpty) {
+        eventTimeController.text.isNotEmpty) {
       DateTime eventDate =
           _pickedDate.add(Duration(hours: _hour, minutes: _minute));
       await _eventService.createEvent(
           eventNameController.text, eventDescriptionController.text, eventDate);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Event created with the name: ${eventNameController.text}")));
       widget.onHomePressed();
     }
+  }
+
+  void cancelEvent() {
+    eventNameController.clear();
+    eventDescriptionController.clear();
+    eventDateController.clear();
+    eventTimeController.clear();
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Event cancelled")));
   }
 
   @override
@@ -92,9 +104,9 @@ class _NewEventPageState extends State<NewEventPage> {
                 Expanded(
                   child: MyTextField(
                     controller: eventTimeController,
-                    hintText: 'Date',
+                    hintText: 'Time',
                     obscureText: false,
-                    prefixIcon: const Icon(Icons.calendar_today),
+                    prefixIcon: const Icon(Icons.alarm),
                     readOnly: true,
                     onTap: () {
                       _selectHours();
@@ -111,7 +123,7 @@ class _NewEventPageState extends State<NewEventPage> {
               children: [
                 Expanded(
                     child: MyButton(
-                        onTap: () {},
+                        onTap: cancelEvent,
                         bgColor: const Color(0xffC92A2A),
                         text: 'Cancel')),
                 const SizedBox(
