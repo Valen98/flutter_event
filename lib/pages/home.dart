@@ -52,7 +52,9 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const SearchPage();
       case 2:
-        return const NewEventPage();
+        return NewEventPage(onHomePressed: () {
+          _onItemTapped(0);
+        });
       case 3:
         return const ProfilePage();
       default:

@@ -24,55 +24,57 @@ class EventCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EventPage(
-                      event: event,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventPage(
+              event: event,
+            ),
+          ),
+        );
       },
-      child: Container(
-        width: 350,
-        height: 180,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: colors[randNumber],
-          boxShadow: [
-            BoxShadow(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          width: 350, // Fixed width
+          height: 180,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: colors[randNumber],
+            boxShadow: [
+              BoxShadow(
                 color: const Color(0xff121212).withOpacity(0.4),
                 spreadRadius: 5,
                 blurRadius: 7,
-                offset: const Offset(3, 5))
-          ],
-        ),
-        child: Padding(
+                offset: const Offset(3, 5),
+              ),
+            ],
+          ),
+          child: Padding(
             padding: const EdgeInsets.only(
-              top: 25,
+              top: 20,
             ),
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: const Color(0xff1D1D1D)),
+                borderRadius: BorderRadius.circular(15),
+                color: const Color(0xff1D1D1D),
+              ),
               child: Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Align text at the start
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        event['eventName'],
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                      width: 320,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: RichText(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          event['eventName'],
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        RichText(
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
@@ -81,66 +83,58 @@ class EventCard extends StatelessWidget {
                               TextSpan(
                                 text: event['eventDesc'],
                                 style: const TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500),
-                              )
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ),
+                      ],
                     ),
                     const SizedBox(
-                      height: 45,
+                      height: 20,
                     ),
                     Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.calendar_today,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                              const SizedBox(width: 8.0),
-                              Text(
-                                (dateFormat
-                                    .format(event['eventDate'].toDate())),
-                                style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w300),
-                              ),
-                            ],
+                        const Icon(
+                          Icons.calendar_today,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8.0),
+                        Text(
+                          (dateFormat.format(event['eventDate'].toDate())),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300,
                           ),
                         ),
-                        const SizedBox(
-                          width: 120,
+                        const Spacer(), // Add a spacer to push elements to the sides
+                        const Icon(
+                          Icons.pin_drop_outlined,
+                          color: Colors.white,
+                          size: 16,
                         ),
-                        const Row(
-                          children: [
-                            Icon(
-                              Icons.pin_drop_outlined,
-                              color: Colors.white,
-                              size: 16,
+                        const SizedBox(width: 8.0),
+                        const Padding(
+                          padding: EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            'Location',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
                             ),
-                            SizedBox(
-                              width: 8.0,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: Text(
-                                'Location',
-                                style: TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w300),
-                              ),
-                            ),
-                          ],
-                        )
+                          ),
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }

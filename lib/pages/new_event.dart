@@ -5,7 +5,8 @@ import 'package:event/services/event/event_service.dart';
 import 'package:flutter/material.dart';
 
 class NewEventPage extends StatefulWidget {
-  const NewEventPage({super.key});
+  final VoidCallback onHomePressed;
+  const NewEventPage({super.key, required this.onHomePressed});
 
   @override
   State<NewEventPage> createState() => _NewEventPageState();
@@ -31,6 +32,7 @@ class _NewEventPageState extends State<NewEventPage> {
           _pickedDate.add(Duration(hours: _hour, minutes: _minute));
       await _eventService.createEvent(
           eventNameController.text, eventDescriptionController.text, eventDate);
+      widget.onHomePressed();
     }
   }
 
