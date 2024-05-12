@@ -180,41 +180,51 @@ class _ProfilePageState extends State<ProfilePage> {
           return Text('Error: ${snapshot.error}');
         } else {
           List<String> eventIDs = snapshot.data ?? [];
-          return ListView.builder(
-            itemCount: eventIDs.length,
-            itemBuilder: (context, index) {
-              return StreamBuilder(
-                  stream: _eventService.getEvent(eventIDs[index]),
-                  builder: (contextx, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Show loading indicator
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      final eventDocument = snapshot.data?.data();
-                      // Check if eventDocument is not null before accessing its fields
-                      if (eventDocument != null) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              EventCard(event: eventDocument),
-                            ],
-                          ),
-                        );
+          if (eventIDs.isNotEmpty) {
+            return ListView.builder(
+              itemCount: eventIDs.length,
+              itemBuilder: (context, index) {
+                return StreamBuilder(
+                    stream: _eventService.getEvent(eventIDs[index]),
+                    builder: (contextx, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(); // Show loading indicator
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
                       } else {
-                        return const SizedBox(
-                          height: 1,
-                          width: 1,
-                        );
+                        final eventDocument = snapshot.data?.data();
+                        // Check if eventDocument is not null before accessing its fields
+                        if (eventDocument != null) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                EventCard(event: eventDocument),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return const SizedBox(
+                            height: 1,
+                            width: 1,
+                          );
+                        }
                       }
-                    }
-                  });
-            },
-          );
+                    });
+              },
+            );
+          } else {
+            return const Column(
+              children: [
+                Center(
+                  child: Text("No events have been created"),
+                )
+              ],
+            );
+          }
         }
       },
     );

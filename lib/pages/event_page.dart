@@ -1,10 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/my_button.dart';
 import 'package:event/pages/event_chat.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class EventPage extends StatefulWidget {
@@ -153,29 +153,32 @@ class _EventPageState extends State<EventPage> {
                         ),
                       );
                     }
-                    var user = snapshot.data!;
-                    return ListTile(
-                        title: Text(
-                          user['displayName'],
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        trailing: IconButton(
-                          onPressed: () {
-                            _eventService.addUserToEvent(
-                                user['uid'], widget.event['eventID']);
-                            addedFriend(user['uid']);
-                          },
-                          icon: const Icon(
-                            Icons.add_box,
-                            color: Color(0xff533AC7),
-                          ),
-                        ));
+                    DocumentSnapshot user = snapshot.data!;
+                    return _friendsItem(user);
                   }));
             },
           ),
         ),
       ],
     );
+  }
+
+  ListTile _friendsItem(DocumentSnapshot user) {
+    return ListTile(
+        title: Text(
+          user['displayName'],
+          style: const TextStyle(color: Colors.white),
+        ),
+        trailing: IconButton(
+          onPressed: () {
+            _eventService.addUserToEvent(user['uid'], widget.event['eventID']);
+            addedFriend(user['uid']);
+          },
+          icon: const Icon(
+            Icons.add_box,
+            color: Color(0xff533AC7),
+          ),
+        ));
   }
 
   AppBar appBar() {

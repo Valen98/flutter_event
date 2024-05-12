@@ -18,17 +18,24 @@ class AuthService extends ChangeNotifier {
           .signInWithEmailAndPassword(email: email, password: password);
 
       String uid = userCredential.user!.uid;
+      List<dynamic> getFriends = await _getFriends(uid);
+      List<dynamic> getEvents = await _getEvents(uid);
 
       MyUser currentUser = MyUser(
-          displayName: await getDisplayName(uid),
-          email: email,
-          uid: userCredential.user!.uid);
+        displayName: await getDisplayName(uid),
+        email: email,
+        uid: userCredential.user!.uid,
+        friends: getFriends,
+        events: getEvents,
+      );
       CurrentUser().setUser(currentUser);
 
-      _fireStore
-          .collection('users')
-          .doc(uid)
-          .set({'uid': uid, 'email': email}, SetOptions(merge: true));
+      _fireStore.collection('users').doc(uid).set({
+        'uid': uid,
+        'email': email,
+        'friends': getFriends,
+        'events': getEvents,
+      }, SetOptions(merge: true));
 
       return userCredential;
     }
@@ -46,22 +53,29 @@ class AuthService extends ChangeNotifier {
 
       // after creating the user, create a new document for the user in the users collection
       MyUser currentUser = MyUser(
-          displayName: displayName,
-          email: email,
-          uid: userCredential.user!.uid);
+        displayName: displayName,
+        email: email,
+        uid: userCredential.user!.uid,
+        friends: [],
+        events: [],
+      );
       CurrentUser().setUser(currentUser);
 
       _fireStore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'email': email,
-        'displayName': displayName
+        'displayName': displayName,
+        'friends': [],
+        'events': [],
       });
 
       // Create a public user table to find users
       _fireStore.collection('publicUser').doc(displayName).set({
         'displayName': displayName,
         'uid': userCredential.user!.uid,
-        'email': email
+        'email': email,
+        'friends': [],
+        'events': [],
       });
 
       return userCredential;
@@ -82,6 +96,36 @@ class AuthService extends ChangeNotifier {
       throw Exception(e.code);
     }
     return "";
+  }
+
+  // get the friends list
+  Future<List<dynamic>> _getFriends(String uid) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> userDoc =
+          await _fireStore.collection('users').doc(uid).get();
+
+      if (userDoc.exists) {
+        return userDoc.get('friends');
+      }
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.code);
+    }
+    return [];
+  }
+
+  // get the event list
+  Future<List<dynamic>> _getEvents(String uid) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> userDoc =
+          await _fireStore.collection('users').doc(uid).get();
+
+      if (userDoc.exists) {
+        return userDoc.get('events');
+      }
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.code);
+    }
+    return [];
   }
 
   //Sign out user

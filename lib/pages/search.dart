@@ -79,6 +79,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool iconVisible = true;
     return Scaffold(
       appBar: const MyAppBar(title: 'Search for friends'),
       body: Padding(
@@ -110,15 +111,22 @@ class _SearchPageState extends State<SearchPage> {
                               user['displayName'],
                               style: const TextStyle(color: Colors.white),
                             ),
-                            trailing: IconButton(
-                              onPressed: () {
-                                addFriend(user['uid']);
-                              },
-                              icon: const Icon(
-                                Icons.add_box,
-                                color: Color(0xff533AC7),
-                              ),
-                            ),
+                            trailing: iconVisible
+                                ? IconButton(
+                                    onPressed: () {
+                                      // Hide the icon when pressed
+                                      setState(() {
+                                        iconVisible = false;
+                                      });
+                                      addFriend(user[
+                                          'uid']); // Perform action when icon is pressed
+                                    },
+                                    icon: const Icon(
+                                      Icons.add_box,
+                                      color: Color(0xff533AC7),
+                                    ),
+                                  )
+                                : null,
                           ),
                         ),
                       ],
