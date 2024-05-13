@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_button.dart';
 import 'package:event/pages/event_chat.dart';
 import 'package:event/services/event/event_service.dart';
@@ -22,6 +23,14 @@ class _EventPageState extends State<EventPage> {
   final UserService _userService = UserService();
   List<dynamic> friendsID = [];
   List<dynamic> alreadyMember = [];
+  Map<String, Color> colors = {
+    'Purple': const Color(0xff533AC7),
+    'Green': const Color(0xff3AC762),
+    'Pink': const Color(0xffC73A80),
+    'Yellow': const Color(0xffFAC234),
+    'Red': const Color(0xffCC1A1A),
+    'Orange': const Color(0xffE0831F)
+  };
 
   @override
   void initState() {
@@ -56,7 +65,15 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
+      appBar: MyAppBar(
+        title: "Event ${widget.event['eventName']}",
+        bgColor: widget.event['color'] != "" && widget.event['color'] != null
+            ? colors[widget.event['color']]!.withOpacity(0.6)
+            : const Color(0xff1D1D1D),
+        icon: widget.event['hostID'] == _auth.currentUser!.uid
+            ? const Icon(Icons.settings, color: Colors.white)
+            : null,
+      ),
       body: SafeArea(
         child: SizedBox(
           width: 400,

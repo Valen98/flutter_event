@@ -4,7 +4,14 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Function()? onPressed;
   final String title;
   final Icon? icon;
-  const MyAppBar({super.key, this.onPressed, required this.title, this.icon});
+  final Color? bgColor;
+  
+  const MyAppBar(
+      {super.key,
+      this.onPressed,
+      required this.title,
+      this.icon,
+      this.bgColor});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -29,7 +36,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontSize: 24,
         ),
       ),
-      backgroundColor: const Color(0xff1D1D1D).withOpacity(0.8),
+      backgroundColor: bgColor,
       elevation: 0,
       centerTitle: true,
       actions: actions,
