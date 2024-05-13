@@ -8,16 +8,17 @@ class Event {
   final String hostEmail;
   final Timestamp created;
   final String eventID;
+  final String? color;
 
-  Event({
-    required this.hostID,
-    required this.eventName,
-    required this.eventDesc,
-    required this.eventDate,
-    required this.hostEmail,
-    required this.created,
-    required this.eventID,
-  });
+  Event(
+      {required this.hostID,
+      required this.eventName,
+      required this.eventDesc,
+      required this.eventDate,
+      required this.hostEmail,
+      required this.created,
+      required this.eventID,
+      this.color});
 
   // Convert to map
   Map<String, dynamic> toMap() {
@@ -29,6 +30,7 @@ class Event {
       'hostEmail': hostEmail,
       'created': created,
       'eventID': eventID,
+      'color': color,
     };
   }
 }

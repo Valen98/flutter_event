@@ -10,16 +10,15 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm");
-    Random random = Random();
-    int randNumber = random.nextInt(5);
-    List<Color> colors = [
-      const Color(0xff533AC7),
-      const Color(0xff3AC762),
-      const Color(0xffC73A80),
-      const Color(0xffC79F3A),
-      const Color(0xffC7a1B6),
-      const Color(0xff3AC7A3)
-    ];
+
+    Map<String, Color> colors = {
+      'Purple': const Color(0xff533AC7),
+      'Green': const Color(0xff3AC762),
+      'Pink': const Color(0xffC73A80),
+      'Yellow': const Color(0xffFAC234),
+      'Red': const Color(0xffCC1A1A),
+      'Orange': const Color(0xffE0831F)
+    };
 
     return GestureDetector(
       onTap: () {
@@ -39,7 +38,9 @@ class EventCard extends StatelessWidget {
           height: 180,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: colors[randNumber],
+            color: event['color'] != "" && event['color'] != null
+                ? colors[event['color']]
+                : const Color(0xff533AC7),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xff121212).withOpacity(0.4),
