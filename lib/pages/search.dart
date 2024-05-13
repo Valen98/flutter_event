@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_text_field.dart';
-import 'package:event/pages/profile.dart';
 import 'package:event/pages/public_profile.dart';
 import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -136,15 +134,6 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
       ),
-
-      /* Column(children: [
-        
-        MyTextField(
-            controller: searchUserController,
-            hintText: 'Search User',
-            obscureText: false,
-            readOnly: false),
-      ]), */
     );
   }
 }

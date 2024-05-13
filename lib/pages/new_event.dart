@@ -2,7 +2,9 @@ import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_button.dart';
 import 'package:event/components/my_text_field.dart';
 import 'package:event/services/event/event_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class NewEventPage extends StatefulWidget {
   final VoidCallback onHomePressed;
@@ -21,6 +23,25 @@ class _NewEventPageState extends State<NewEventPage> {
   late DateTime _pickedDate;
   late int _hour;
   late int _minute;
+  String? _selectedColor;
+
+  Map<String, Color> colors = {
+    'Purple': const Color(0xff533AC7),
+    'Green': const Color(0xff3AC762),
+    'Red': const Color(0xffC73A80),
+    'Yellow': const Color(0xffC79F3A),
+    'Pink': const Color(0xffC7a1B6),
+    'Orange': const Color.fromARGB(255, 199, 131, 58)
+  };
+
+  List<Color> colorsList = [
+    const Color(0xff533AC7),
+    const Color(0xff3AC762),
+    const Color(0xffC73A80),
+    const Color(0xffC79F3A),
+    const Color(0xffC7a1B6),
+    const Color(0xff3AC7A3)
+  ];
 
   void postEvent() async {
     if (eventNameController.text.isNotEmpty &&
@@ -114,6 +135,44 @@ class _NewEventPageState extends State<NewEventPage> {
                   ),
                 ),
               ],
+            ),
+
+            DropdownButton<String>(
+              value: _selectedColor,
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedColor = newValue;
+                });
+              },
+              items: colors.entries.map<DropdownMenuItem<String>>(
+                (entry) {
+                  return DropdownMenuItem<String>(
+                    value: entry.key,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            color: entry.value,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(entry.key,
+                              style: const TextStyle(color: Colors.white)),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ).toList(),
+              hint: const Text(
+                "Select a color",
+                style: TextStyle(color: Colors.white),
+              ),
+              dropdownColor: Colors.black,
             ),
 
             const SizedBox(
