@@ -20,6 +20,7 @@ class EventCard extends StatelessWidget {
       'Orange': const Color(0xffE0831F)
     };
 
+    // TODO: add a InkWell so the user get more feedback.
     return GestureDetector(
       onTap: () {
         Navigator.push(

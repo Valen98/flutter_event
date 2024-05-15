@@ -12,7 +12,30 @@ class MyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Material(
+      borderRadius: BorderRadius.circular(16),
+      color: bgColor,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: Center(
+            child: Text(
+              text,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/* GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(25),
@@ -27,5 +50,4 @@ class MyButton extends StatelessWidget {
         ),
       ),
     );
-  }
-}
+    */
