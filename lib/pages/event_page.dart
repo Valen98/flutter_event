@@ -23,6 +23,7 @@ class _EventPageState extends State<EventPage> {
   final UserService _userService = UserService();
   List<dynamic> friendsID = [];
   List<dynamic> alreadyMember = [];
+  bool notAdded = true;
   Map<String, Color> colors = {
     'Purple': const Color(0xff533AC7),
     'Green': const Color(0xff3AC762),
@@ -59,6 +60,7 @@ class _EventPageState extends State<EventPage> {
   void addedFriend(String userID) {
     setState(() {
       friendsID.remove(userID);
+      notAdded = false;
     });
   }
 
@@ -67,6 +69,7 @@ class _EventPageState extends State<EventPage> {
     return Scaffold(
       appBar: MyAppBar(
         title: "Event ${widget.event['eventName']}",
+        onPressed: () {},
         bgColor: widget.event['color'] != "" && widget.event['color'] != null
             ? colors[widget.event['color']]!.withOpacity(0.6)
             : const Color(0xff1D1D1D),
@@ -186,16 +189,22 @@ class _EventPageState extends State<EventPage> {
           user['displayName'],
           style: const TextStyle(color: Colors.white),
         ),
-        trailing: IconButton(
-          onPressed: () {
-            _eventService.addUserToEvent(user['uid'], widget.event['eventID']);
-            addedFriend(user['uid']);
-          },
-          icon: const Icon(
-            Icons.add_box,
-            color: Color(0xff533AC7),
-          ),
-        ));
+        trailing: notAdded
+            ? IconButton(
+                onPressed: () {
+                  _eventService.addUserToEvent(
+                      user['uid'], widget.event['eventID']);
+                  addedFriend(user['uid']);
+                },
+                icon: const Icon(
+                  Icons.add_box,
+                  color: Color(0xff533AC7),
+                ),
+              )
+            : const Text(
+                "Invited",
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ));
   }
 
   AppBar appBar() {
