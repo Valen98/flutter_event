@@ -77,49 +77,58 @@ class _HomePageState extends State<HomePage> {
 
   Widget _builderEventList() {
     return StreamBuilder<List<String>>(
-      stream: _eventService.getEventIDsFromUser(_auth.currentUser!.uid),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show loading indicator
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          List<String> eventIDs = snapshot.data ?? [];
-          return ListView.builder(
-            itemCount: eventIDs.length,
-            itemBuilder: (context, index) {
-              return StreamBuilder(
-                  stream: _eventService.getEvent(eventIDs[index]),
-                  builder: (contextx, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Show loading indicator
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      final eventDocument = snapshot.data?.data();
-                      // Check if eventDocument is not null before accessing its fields
-                      if (eventDocument == null) {
-                        return const Text("This should not exist");
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 20,
+        stream: _eventService.getEventIDsFromUser(_auth.currentUser!.uid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // Show loading indicator
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            List<String> eventIDs = snapshot.data ?? [];
+            if (eventIDs.isNotEmpty) {
+              return ListView.builder(
+                itemCount: eventIDs.length,
+                itemBuilder: (context, index) {
+                  return StreamBuilder(
+                      stream: _eventService.getEvent(eventIDs[index]),
+                      builder: (contextx, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Show loading indicator
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          final eventDocument = snapshot.data?.data();
+                          // Check if eventDocument is not null before accessing its fields
+                          if (eventDocument == null) {
+                            return const Text("This should not exist");
+                          } else {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  EventCard(event: eventDocument),
+                                ],
                               ),
-                              EventCard(event: eventDocument),
-                            ],
-                          ),
-                        );
-                      }
-                    }
-                  });
-            },
-          );
-        }
-      },
-    );
+                            );
+                          }
+                        }
+                      });
+                },
+              );
+            } else {
+              return const Center(
+                child: Text(
+                  "No events found!",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              );
+            }
+          }
+        });
   }
 
   /* Widget _builderEventList() {

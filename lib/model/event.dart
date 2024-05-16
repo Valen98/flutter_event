@@ -9,16 +9,19 @@ class Event {
   final Timestamp created;
   final String eventID;
   final String? color;
+  final List members;
 
-  Event(
-      {required this.hostID,
-      required this.eventName,
-      required this.eventDesc,
-      required this.eventDate,
-      required this.hostEmail,
-      required this.created,
-      required this.eventID,
-      this.color});
+  Event({
+    required this.hostID,
+    required this.eventName,
+    required this.eventDesc,
+    required this.eventDate,
+    required this.hostEmail,
+    required this.created,
+    required this.eventID,
+    required this.members,
+    this.color,
+  });
 
   // Convert to map
   Map<String, dynamic> toMap() {
@@ -31,6 +34,7 @@ class Event {
       'created': created,
       'eventID': eventID,
       'color': color,
+      'members': members
     };
   }
 }

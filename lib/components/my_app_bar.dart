@@ -5,13 +5,14 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Icon? icon;
   final Color? bgColor;
-  
-  const MyAppBar(
-      {super.key,
-      this.onPressed,
-      required this.title,
-      this.icon,
-      this.bgColor});
+
+  const MyAppBar({
+    super.key,
+    this.onPressed,
+    required this.title,
+    this.icon,
+    this.bgColor,
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);

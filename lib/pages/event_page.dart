@@ -23,7 +23,9 @@ class _EventPageState extends State<EventPage> {
   final UserService _userService = UserService();
   List<dynamic> friendsID = [];
   List<dynamic> alreadyMember = [];
-  bool notAdded = true;
+  bool iconVisible = true;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   Map<String, Color> colors = {
     'Purple': const Color(0xff533AC7),
     'Green': const Color(0xff3AC762),
@@ -60,88 +62,147 @@ class _EventPageState extends State<EventPage> {
   void addedFriend(String userID) {
     setState(() {
       friendsID.remove(userID);
-      notAdded = false;
+      iconVisible = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
-        title: "Event ${widget.event['eventName']}",
-        onPressed: () {},
-        bgColor: widget.event['color'] != "" && widget.event['color'] != null
-            ? colors[widget.event['color']]!.withOpacity(0.6)
-            : const Color(0xff1D1D1D),
-        icon: widget.event['hostID'] == _auth.currentUser!.uid
-            ? const Icon(Icons.settings, color: Colors.white)
-            : null,
+        key: _scaffoldKey,
+        appBar: MyAppBar(
+          title: "Event ${widget.event['eventName']}",
+          onPressed: () {
+            _scaffoldKey.currentState!.openEndDrawer();
+          },
+          bgColor: widget.event['color'] != "" && widget.event['color'] != null
+              ? colors[widget.event['color']]!.withOpacity(0.6)
+              : const Color(0xff1D1D1D),
+          icon: widget.event['hostID'] == _auth.currentUser!.uid
+              ? const Icon(Icons.settings, color: Colors.white)
+              : null,
+        ),
+        body: _eventPage(context),
+        endDrawer: widget.event['hostID'] == _auth.currentUser!.uid
+            ? _drawer(context)
+            : null);
+  }
+
+  Drawer _drawer(BuildContext context) {
+    return Drawer(
+      backgroundColor: const Color(0xff1D1D1D),
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+              decoration: BoxDecoration(
+                  color: widget.event['color'] != "" &&
+                          widget.event['color'] != null
+                      ? colors[widget.event['color']]!
+                      : const Color(0xff1D1D1D)),
+              child: const Text("Drawer Header")),
+          Column(
+            children: [
+              ListTile(
+                leading: const Icon(
+                  Icons.add_box,
+                  color: Color(0xff533AC7),
+                ),
+                title: const Text(
+                  "Add friends to event",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  showModalBottomSheet(
+                      backgroundColor: const Color(0xff303335),
+                      enableDrag: true,
+                      context: context,
+                      builder: ((context) {
+                        if (friendsID.isNotEmpty) {
+                          return _friendsList();
+                        } else {
+                          return const Center(
+                            child: Text(
+                              "No more friends to add.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          );
+                        }
+                      }));
+                },
+              ),
+              ListTile(
+                title: const Text("Item 2"),
+                onTap: () {},
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: MyButton(
+                  bgColor: const Color(0xffC92A2A),
+                  onTap: () async {
+                    _eventService.deleteEvent(widget.event);
+
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            "Event: ${widget.event['eventName']} has been deleted")));
+                    //Close drawer
+                    Navigator.pop(context);
+                    //Go back to home page
+                    Navigator.pop(context);
+                  },
+                  text: "Delete Event",
+                ),
+              )
+            ],
+          ),
+        ],
       ),
-      body: SafeArea(
-        child: SizedBox(
-          width: 400,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.event['eventName'],
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "When: ${dateFormat.format(widget.event['eventDate'].toDate())}",
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w300),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  widget.event['eventDesc'],
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                MyButton(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EventChatPage(
-                                  hostID: widget.event['hostID'],
-                                  eventID: widget.event['eventID'])));
-                    },
-                    bgColor: Colors.blue,
-                    text: 'Chat'),
-                MyButton(
-                    onTap: () {
-                      showModalBottomSheet(
-                          backgroundColor: const Color(0xff303335),
-                          enableDrag: true,
-                          context: context,
-                          builder: ((context) {
-                            if (friendsID.isNotEmpty) {
-                              return _friendsList();
-                            } else {
-                              return const Center(
-                                child: Text(
-                                  "No more friends to add.",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              );
-                            }
-                          }));
-                    },
-                    bgColor: Colors.green,
-                    text: 'Invite person'),
-                //_friendsList(),
-              ],
-            ),
+    );
+  }
+
+  SafeArea _eventPage(BuildContext context) {
+    return SafeArea(
+      child: SizedBox(
+        width: 400,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.event['eventName'],
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "When: ${dateFormat.format(widget.event['eventDate'].toDate())}",
+                style:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                widget.event['eventDesc'],
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              MyButton(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventChatPage(
+                                hostID: widget.event['hostID'],
+                                eventID: widget.event['eventID'])));
+                  },
+                  bgColor: Colors.blue,
+                  text: 'Chat'),
+            ],
           ),
         ),
       ),
@@ -189,7 +250,7 @@ class _EventPageState extends State<EventPage> {
           user['displayName'],
           style: const TextStyle(color: Colors.white),
         ),
-        trailing: notAdded
+        trailing: iconVisible
             ? IconButton(
                 onPressed: () {
                   _eventService.addUserToEvent(

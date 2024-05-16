@@ -217,12 +217,11 @@ class _ProfilePageState extends State<ProfilePage> {
               },
             );
           } else {
-            return const Column(
-              children: [
-                Center(
-                  child: Text("No events have been created"),
-                )
-              ],
+            return const Center(
+              child: Text(
+                "No events found!",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
             );
           }
         }

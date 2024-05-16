@@ -22,7 +22,8 @@ class EventService extends ChangeNotifier {
         hostEmail: currentUserEmail,
         created: timestamp,
         eventID: "",
-        color: color);
+        color: color,
+        members: [currentUserID]);
 
     DocumentReference eventRef =
         await _firestore.collection('events').add(newEvent.toMap());
@@ -104,5 +105,31 @@ class EventService extends ChangeNotifier {
       // Update the document to include the ID as a field
       await collectionRef.doc(eventID).update({'eventID': eventID});
     });
+  }
+
+  void deleteEvent(Map<String, dynamic> event) async {
+    await _firestore.collection('deletedEvents').add(event);
+    WriteBatch batch = _firestore.batch();
+
+    // Iterate through the event members
+    for (var userID in event['members']) {
+      // Reference to the user's document
+      DocumentReference userDoc = _firestore.collection('users').doc(userID);
+
+      // Use arrayRemove to remove the event ID from the user's events array
+      batch.update(userDoc, {
+        'events': FieldValue.arrayRemove([event['eventID']])
+      });
+    }
+
+    // Reference to the event document
+    DocumentReference eventDoc =
+        _firestore.collection('events').doc(event['eventID']);
+
+    // Delete the event document in the batch
+    batch.delete(eventDoc);
+
+    // Commit the batch
+    await batch.commit();
   }
 }

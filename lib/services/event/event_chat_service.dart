@@ -26,8 +26,6 @@ class EventChatService extends ChangeNotifier {
     // add new message to database
     await _firestore
         .collection('events')
-        .doc('event_$hostID')
-        .collection('event')
         .doc(eventID)
         .collection('chat')
         .add(newMessage.toMap());
@@ -37,8 +35,6 @@ class EventChatService extends ChangeNotifier {
   Stream<QuerySnapshot> getMessage(String hostID, String eventID) {
     return _firestore
         .collection('events')
-        .doc('event_$hostID')
-        .collection('event')
         .doc(eventID)
         .collection('chat')
         .orderBy('timestamp', descending: false)

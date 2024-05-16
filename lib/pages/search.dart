@@ -18,6 +18,7 @@ class _SearchPageState extends State<SearchPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   List _allUsers = [];
   List _resultList = [];
+  bool iconVisible = true;
 
   @override
   void initState() {
@@ -73,11 +74,13 @@ class _SearchPageState extends State<SearchPage> {
 
   void addFriend(String recieverID) {
     _userService.addFriend(recieverID, _auth.currentUser!.uid);
+    setState(() {
+      iconVisible = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool iconVisible = true;
     return Scaffold(
       appBar: const MyAppBar(title: 'Search for friends'),
       body: Padding(
@@ -112,10 +115,6 @@ class _SearchPageState extends State<SearchPage> {
                             trailing: iconVisible
                                 ? IconButton(
                                     onPressed: () {
-                                      // Hide the icon when pressed
-                                      setState(() {
-                                        iconVisible = false;
-                                      });
                                       addFriend(user[
                                           'uid']); // Perform action when icon is pressed
                                     },
@@ -124,7 +123,11 @@ class _SearchPageState extends State<SearchPage> {
                                       color: Color(0xff533AC7),
                                     ),
                                   )
-                                : null,
+                                : const Text(
+                                    "Friend added",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 12),
+                                  ),
                           ),
                         ),
                       ],
