@@ -40,4 +40,40 @@ class EventChatService extends ChangeNotifier {
         .orderBy('timestamp', descending: false)
         .snapshots();
   }
+
+  void deleteEventChat(Map<String, dynamic> event) async {
+    WriteBatch batch = _firestore.batch();
+
+    // Reference to the original event document
+    DocumentReference originalEventDoc =
+        _firestore.collection('events').doc(event['eventID']);
+
+    // Reference to the deleted event document
+    DocumentReference deletedEventDoc =
+        _firestore.collection('deletedEvents').doc(event['eventID']);
+
+    // Get the original event document data
+    DocumentSnapshot eventSnapshot = await originalEventDoc.get();
+    if (eventSnapshot.exists) {
+      // Create a new map with the original event data and add the deletionDate field
+      Map<String, dynamic> eventData =
+          eventSnapshot.data() as Map<String, dynamic>;
+      eventData['deletionDate'] = DateTime.now();
+
+      // Set the event data in the deletedEvents collection
+      batch.set(deletedEventDoc, eventData);
+    }
+    // Get the chat subcollection documents
+    QuerySnapshot chatSnapshot =
+        await originalEventDoc.collection('chat').get();
+
+    // Copy each chat document to the new chat subcollection
+    for (var chatDoc in chatSnapshot.docs) {
+      // Reference to the new chat document
+      DocumentReference newChatDoc =
+          deletedEventDoc.collection('chat').doc(chatDoc.id);
+      // Add the chat document data to the new chat subcollection
+      batch.set(newChatDoc, chatDoc.data());
+    }
+  }
 }

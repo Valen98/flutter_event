@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_button.dart';
+import 'package:event/components/my_checkbox.dart';
 import 'package:event/pages/event_chat.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:event/services/user/user_service.dart';
@@ -202,6 +203,8 @@ class _EventPageState extends State<EventPage> {
                   },
                   bgColor: Colors.blue,
                   text: 'Chat'),
+                  
+              const MyCheckbox(title: "Test checkBox")
             ],
           ),
         ),
