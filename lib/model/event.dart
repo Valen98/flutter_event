@@ -5,6 +5,7 @@ class Event {
   final String eventName;
   final String eventDesc;
   final DateTime eventDate;
+  final String hostDisplayName;
   final String hostEmail;
   final Timestamp created;
   final String eventID;
@@ -16,6 +17,7 @@ class Event {
     required this.eventName,
     required this.eventDesc,
     required this.eventDate,
+    required this.hostDisplayName,
     required this.hostEmail,
     required this.created,
     required this.eventID,
@@ -30,6 +32,7 @@ class Event {
       'eventName': eventName,
       'eventDesc': eventDesc,
       'eventDate': eventDate,
+      'hostDisplayName': hostDisplayName,
       'hostEmail': hostEmail,
       'created': created,
       'eventID': eventID,

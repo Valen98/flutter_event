@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_button.dart';
 import 'package:event/components/my_checkbox.dart';
-import 'package:event/pages/event_chat.dart';
+import 'package:event/components/my_text_field.dart';
+import 'package:event/pages/event/event_chat.dart';
+import 'package:event/pages/event/event_tasks.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -67,6 +69,74 @@ class _EventPageState extends State<EventPage> {
     });
   }
 
+  Future<void> _openModal() async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: const Color(0xff1D1D1D),
+              ),
+              width: 400,
+              height: 175,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const DefaultTextStyle(
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600),
+                      child:
+                          Text("Are you sure you want to delete this event?"),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 160,
+                          child: MyButton(
+                            bgColor: const Color(0xffC92A2A),
+                            onTap: () async {
+                              _eventService.deleteEvent(widget.event);
+
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text(
+                                      "Event: ${widget.event['eventName']} has been deleted")));
+                              Navigator.of(context, rootNavigator: true).pop();
+                              Navigator.pop(context);
+                            },
+                            text: "Delete Event",
+                          ),
+                        ),
+                        SizedBox(
+                          width: 160,
+                          child: MyButton(
+                            bgColor: const Color.fromARGB(255, 51, 48, 222),
+                            onTap: () async {
+                              Navigator.of(context, rootNavigator: true).pop();
+                            },
+                            text: "Cancel",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,56 +173,55 @@ class _EventPageState extends State<EventPage> {
                       : const Color(0xff1D1D1D)),
               child: const Text("Drawer Header")),
           Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.add_box,
-                  color: Color(0xff533AC7),
-                ),
-                title: const Text(
-                  "Add friends to event",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  showModalBottomSheet(
-                      backgroundColor: const Color(0xff303335),
-                      enableDrag: true,
-                      context: context,
-                      builder: ((context) {
-                        if (friendsID.isNotEmpty) {
-                          return _friendsList();
-                        } else {
-                          return const Center(
-                            child: Text(
-                              "No more friends to add.",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          );
-                        }
-                      }));
-                },
-              ),
-              ListTile(
-                title: const Text("Item 2"),
-                onTap: () {},
+              Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(
+                      Icons.add_box,
+                      color: Color(0xff533AC7),
+                    ),
+                    title: const Text(
+                      "Add friends to event",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      showModalBottomSheet(
+                          backgroundColor: const Color(0xff303335),
+                          enableDrag: true,
+                          context: context,
+                          builder: ((context) {
+                            if (friendsID.isNotEmpty) {
+                              return _friendsList();
+                            } else {
+                              return const Center(
+                                child: Text(
+                                  "No more friends to add.",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            }
+                          }));
+                    },
+                  ),
+                  ListTile(
+                    title: const Text("Item 2"),
+                    onTap: () {},
+                  ),
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: MyButton(
                   bgColor: const Color(0xffC92A2A),
                   onTap: () async {
-                    _eventService.deleteEvent(widget.event);
-
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                            "Event: ${widget.event['eventName']} has been deleted")));
-                    //Close drawer
                     Navigator.pop(context);
-                    //Go back to home page
-                    Navigator.pop(context);
+                    _openModal();
                   },
                   text: "Delete Event",
                 ),
@@ -203,8 +272,7 @@ class _EventPageState extends State<EventPage> {
                   },
                   bgColor: Colors.blue,
                   text: 'Chat'),
-                  
-              const MyCheckbox(title: "Test checkBox")
+              EventTasks(eventID: widget.event['eventID'])
             ],
           ),
         ),
@@ -270,23 +338,4 @@ class _EventPageState extends State<EventPage> {
                 style: TextStyle(color: Colors.grey, fontSize: 12),
               ));
   }
-
-  AppBar appBar() {
-    return AppBar(
-      title: Text(
-        widget.event['eventName'],
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 24,
-        ),
-      ),
-      backgroundColor: const Color(0xff1D1D1D),
-      elevation: 0,
-      centerTitle: true,
-      actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.settings))],
-    );
-  }
-
-  // Make it possible to invite people.
 }

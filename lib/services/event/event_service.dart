@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/model/event.dart';
 import 'package:event/services/event/event_chat_service.dart';
+import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class EventService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final UserService _userService = UserService();
 
   //Create Event
   Future<void> createEvent(String eventName, String eventDesc,
@@ -21,6 +23,7 @@ class EventService extends ChangeNotifier {
         eventDesc: eventDesc,
         eventDate: eventDate,
         hostEmail: currentUserEmail,
+        hostDisplayName: await _userService.getDisplayName(currentUserID),
         created: timestamp,
         eventID: "",
         color: color,
@@ -38,8 +41,6 @@ class EventService extends ChangeNotifier {
     await _firestore.collection('users').doc(currentUserID).update({
       'events': FieldValue.arrayUnion([eventRef.id])
     });
-
-    addIDsToDocuments(currentUserID);
   }
 
   /* Stream<QuerySnapshot> getEvents(String currentUserID) {
@@ -88,29 +89,9 @@ class EventService extends ChangeNotifier {
     });
   }
 
-  void addIDsToDocuments(String currentUserID) async {
-    // Reference to your Firestore collection
-    CollectionReference collectionRef = FirebaseFirestore.instance
-        .collection('events')
-        .doc('event_$currentUserID')
-        .collection('event');
-
-    // Retrieve all documents in the collection
-    QuerySnapshot querySnapshot = await collectionRef.get();
-
-    // Iterate over each document
-    querySnapshot.docs.forEach((doc) async {
-      // Get the ID of the document
-      String eventID = doc.id;
-
-      // Update the document to include the ID as a field
-      await collectionRef.doc(eventID).update({'eventID': eventID});
-    });
-  }
-
   void deleteEvent(Map<String, dynamic> event) async {
     WriteBatch batch = _firestore.batch();
-    
+
     EventChatService eventChatService = EventChatService();
 
     eventChatService.deleteEventChat(event);

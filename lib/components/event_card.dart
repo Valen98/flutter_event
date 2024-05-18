@@ -1,4 +1,4 @@
-import 'package:event/pages/event_page.dart';
+import 'package:event/pages/event/event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
