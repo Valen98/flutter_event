@@ -235,18 +235,34 @@ class _EventPageState extends State<EventPage> {
 
   SafeArea _eventPage(BuildContext context) {
     return SafeArea(
-      child: SizedBox(
-        width: 400,
+      child: Expanded(
         child: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.event['eventName'],
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Text(
+                    widget.event['eventName'],
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EventChatPage(
+                                    hostID: widget.event['hostID'],
+                                    eventID: widget.event['eventID'])));
+                      },
+                      icon: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                      ))
+                ],
               ),
               Text(
                 "When: ${dateFormat.format(widget.event['eventDate'].toDate())}",
@@ -261,17 +277,6 @@ class _EventPageState extends State<EventPage> {
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
-              MyButton(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EventChatPage(
-                                hostID: widget.event['hostID'],
-                                eventID: widget.event['eventID'])));
-                  },
-                  bgColor: Colors.blue,
-                  text: 'Chat'),
               EventTasks(eventID: widget.event['eventID'])
             ],
           ),

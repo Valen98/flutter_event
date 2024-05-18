@@ -42,4 +42,15 @@ class EventTaskService extends ChangeNotifier {
       }
     }
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getTasks(
+    String eventID,
+  ) {
+    return _firestore
+        .collection('events')
+        .doc(eventID)
+        .collection('tasks')
+        .orderBy('taskName', descending: false)
+        .snapshots();
+  }
 }

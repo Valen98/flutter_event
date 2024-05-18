@@ -15,7 +15,7 @@ class MyTextField extends StatelessWidget {
     required this.hintText,
     required this.obscureText,
     required this.readOnly,
-    this.maxLines,
+    this.maxLines = 1,
     this.onTap,
     this.prefixIcon,
   });
@@ -25,6 +25,7 @@ class MyTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText,
+      maxLines: maxLines,
       decoration: InputDecoration(
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.black),
