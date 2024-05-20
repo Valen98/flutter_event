@@ -235,52 +235,62 @@ class _EventPageState extends State<EventPage> {
 
   SafeArea _eventPage(BuildContext context) {
     return SafeArea(
-      child: Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    widget.event['eventName'],
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+      child: Column(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        widget.event['eventName'],
+                        style: const TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EventChatPage(
+                                        hostID: widget.event['hostID'],
+                                        eventID: widget.event['eventID'])));
+                          },
+                          icon: const Icon(
+                            Icons.send,
+                            color: Colors.white,
+                          ))
+                    ],
                   ),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EventChatPage(
-                                    hostID: widget.event['hostID'],
-                                    eventID: widget.event['eventID'])));
-                      },
-                      icon: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      ))
-                ],
-              ),
-              Text(
-                "When: ${dateFormat.format(widget.event['eventDate'].toDate())}",
-                style:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                widget.event['eventDesc'],
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              EventTasks(eventID: widget.event['eventID'])
-            ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Text(
+                    "When: ${dateFormat.format(widget.event['eventDate'].toDate())}",
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w300),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Text(
+                    widget.event['eventDesc'],
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                EventTasks(eventID: widget.event['eventID'])
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -37,22 +37,27 @@ class _EventTasksState extends State<EventTasks> {
             children: [
               InkWell(
                   onTap: _openModal,
-                  child: const Row(
-                    children: [
-                      Text("Add Task"),
-                      Icon(
-                        Icons.add_box,
-                        color: Color(0xff533AC7),
-                      )
-                    ],
-                  )),
+                  child: const Padding(
+                      padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                      child: Row(
+                        children: [
+                          Text("Add Task"),
+                          Icon(
+                            Icons.add_box,
+                            color: Color(0xff533AC7),
+                          )
+                        ],
+                      ))),
               InkWell(
                 onTap: () {},
-                child: const Row(
-                  children: [
-                    Text('Update task list'),
-                    Icon(Icons.upload, color: Color(0xff533AC7)),
-                  ],
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Row(
+                    children: [
+                      Text('Update task list'),
+                      Icon(Icons.upload, color: Color(0xff533AC7)),
+                    ],
+                  ),
                 ),
               ),
             ],
