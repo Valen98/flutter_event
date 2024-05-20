@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 
 class MyCheckbox extends StatefulWidget {
   final String title;
+  final String checkID;
   final int checkStatus;
   final double width;
   final double height;
   final Color? color;
   final double? iconSize;
   final Color? checkColor;
-  final Function(int)? onChange;
+  final Function(String, int)? onChange;
 
   const MyCheckbox(
       {super.key,
+      required this.checkID,
       required this.title,
       required this.checkStatus,
       this.width = 32,
@@ -26,20 +28,19 @@ class MyCheckbox extends StatefulWidget {
 }
 
 class _MyCheckboxState extends State<MyCheckbox> {
-  int checkStatus = 0;
+  late int checkStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    checkStatus = widget.checkStatus;
+  }
+
   void _onClicked() {
     setState(() {
-      switch (checkStatus) {
-        case 0:
-          checkStatus = 1;
-          break;
-        case 1:
-          checkStatus = 2;
-          break;
-        default:
-          checkStatus = 0;
-      }
+      checkStatus = (checkStatus + 1) % 3;
     });
+    widget.onChange?.call(widget.checkID, checkStatus);
   }
 
   @override
@@ -54,7 +55,7 @@ class _MyCheckboxState extends State<MyCheckbox> {
         child: Row(
           children: [
             InkWell(
-              onTap: () => _onClicked(),
+              onTap: _onClicked,
               child: Container(
                 width: widget.width,
                 height: widget.height,

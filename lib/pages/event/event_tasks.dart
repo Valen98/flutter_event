@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/my_checkbox.dart';
 import 'package:event/components/my_task_modal.dart';
 import 'package:event/services/event/event_task_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class EventTasks extends StatefulWidget {
@@ -14,6 +15,10 @@ class EventTasks extends StatefulWidget {
 
 class _EventTasksState extends State<EventTasks> {
   final EventTaskService _eventTaskService = EventTaskService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Map<String, int> modifiedTasks = {};
+  Map<String, int> taskStatuses = {}; // Map to store task statuses
+
   Future<void> _openModal() async {
     return showDialog(
       context: context,
@@ -25,6 +30,52 @@ class _EventTasksState extends State<EventTasks> {
         );
       },
     );
+  }
+
+  void _onTaskStatusChanged(String taskId, int newStatus) {
+    setState(() {
+      modifiedTasks[taskId] = newStatus;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeTaskStatuses(); // Fetch initial task statuses from database
+  }
+
+  Future<void> _initializeTaskStatuses() async {
+    // Fetch tasks from the database
+    var snapshot = await _eventTaskService.getTasks(widget.eventID).first;
+    if (snapshot != null && snapshot.docs.isNotEmpty) {
+      // Populate taskStatuses map with task statuses from the database
+      setState(() {
+        taskStatuses = {
+          for (var doc in snapshot.docs) doc.id: doc.data()['taskStatus'] ?? 0,
+        };
+      });
+    }
+  }
+
+  Future<void> _updateTasks() async {
+    final String currentUserID = FirebaseAuth.instance.currentUser!.uid;
+    final Timestamp now = Timestamp.now();
+
+    for (var taskId in modifiedTasks.keys) {
+      final newStatus = modifiedTasks[taskId];
+      await _eventTaskService.updateTask(
+        widget.eventID,
+        taskId,
+        newStatus!,
+        now,
+        currentUserID,
+      );
+    }
+
+    // Clear modified tasks after update
+    setState(() {
+      modifiedTasks.clear();
+    });
   }
 
   @override
@@ -49,13 +100,21 @@ class _EventTasksState extends State<EventTasks> {
                         ],
                       ))),
               InkWell(
-                onTap: () {},
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                onTap: _updateTasks,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                   child: Row(
                     children: [
-                      Text('Update task list'),
-                      Icon(Icons.upload, color: Color(0xff533AC7)),
+                      const Text('Update task list'),
+                      modifiedTasks.isNotEmpty
+                          ? Badge(
+                              label: Text(modifiedTasks.length.toString()),
+                              child: const Icon(
+                                Icons.upload,
+                                color: Color(0xff533AC7),
+                              ),
+                            )
+                          : const Icon(Icons.update, color: Color(0xff533AC7))
                     ],
                   ),
                 ),
@@ -79,8 +138,6 @@ class _EventTasksState extends State<EventTasks> {
         } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
           return const Text('No tasks found');
         } else {
-          // Data is available, build the grid
-
           var tasks = snapshot.data!.docs.map((doc) => doc.data()).toList();
           return Expanded(
             child: GridView.builder(
@@ -92,12 +149,22 @@ class _EventTasksState extends State<EventTasks> {
               ),
               itemCount: tasks.length,
               itemBuilder: (context, index) {
+                var task = tasks[index];
+                int taskStatus = taskStatuses[task['taskID']] ?? 0;
+                String taskID = task['taskID'];
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: MyCheckbox(
-                    title: tasks[index]['taskName']!,
-                    checkStatus: tasks[index]['taskStatus']!,
-                  ),
+                      checkID: taskID,
+                      title: task['taskName'],
+                      //Change the checkStatus to newStatus so it updates.
+                      checkStatus: taskStatus,
+                      onChange: (taskID, newStatus) {
+                        setState(() {
+                          taskStatuses[taskID] = newStatus;
+                        });
+                        _onTaskStatusChanged(taskID, newStatus);
+                      }),
                 );
               },
             ),

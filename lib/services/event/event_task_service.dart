@@ -53,4 +53,23 @@ class EventTaskService extends ChangeNotifier {
         .orderBy('taskName', descending: false)
         .snapshots();
   }
+
+  Future<void> updateTask(
+    String eventID,
+    String taskID,
+    int newStatus,
+    Timestamp updated,
+    String updatedBy,
+  ) async {
+    await _firestore
+        .collection('events')
+        .doc(eventID)
+        .collection('tasks')
+        .doc(taskID)
+        .update({
+      'taskStatus': newStatus,
+      'updated': updated,
+      'updatedBy': updatedBy,
+    });
+  }
 }
