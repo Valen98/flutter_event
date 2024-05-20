@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_button.dart';
-import 'package:event/components/my_checkbox.dart';
-import 'package:event/components/my_text_field.dart';
 import 'package:event/pages/event/event_chat.dart';
 import 'package:event/pages/event/event_tasks.dart';
 import 'package:event/services/event/event_service.dart';

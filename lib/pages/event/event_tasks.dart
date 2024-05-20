@@ -47,7 +47,7 @@ class _EventTasksState extends State<EventTasks> {
   Future<void> _initializeTaskStatuses() async {
     // Fetch tasks from the database
     var snapshot = await _eventTaskService.getTasks(widget.eventID).first;
-    if (snapshot != null && snapshot.docs.isNotEmpty) {
+    if (snapshot.docs.isNotEmpty) {
       // Populate taskStatuses map with task statuses from the database
       setState(() {
         taskStatuses = {
@@ -58,7 +58,6 @@ class _EventTasksState extends State<EventTasks> {
   }
 
   Future<void> _updateTasks() async {
-    final String currentUserID = FirebaseAuth.instance.currentUser!.uid;
     final Timestamp now = Timestamp.now();
 
     for (var taskId in modifiedTasks.keys) {
@@ -68,7 +67,7 @@ class _EventTasksState extends State<EventTasks> {
         taskId,
         newStatus!,
         now,
-        currentUserID,
+        _auth.currentUser!.uid,
       );
     }
 
