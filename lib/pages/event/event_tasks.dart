@@ -113,7 +113,7 @@ class _EventTasksState extends State<EventTasks> {
                                 color: Color(0xff533AC7),
                               ),
                             )
-                          : const Icon(Icons.update, color: Color(0xff533AC7))
+                          : const Icon(Icons.upload, color: Color(0xff533AC7))
                     ],
                   ),
                 ),
