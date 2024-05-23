@@ -360,25 +360,88 @@ class _EventPageState extends State<EventPage> {
               ));
   }
 
+  int caorusel_index = 0;
   Widget carousel() {
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              InkWell(
-                  onTap: () {
-                    _onItemTapped(0);
-                  },
-                  child: const Text("Announcement")),
-              InkWell(
-                  onTap: () {
-                    _onItemTapped(1);
-                  },
-                  child: const Text("Tasks"))
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InkWell(
+                    onTap: () {
+                      caorusel_index = 0;
+                      _onItemTapped(caorusel_index);
+                    },
+                    child: Container(
+                        decoration: caorusel_index == 0
+                            ? BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Colors.white.withOpacity(0.5))),
+                              )
+                            : null,
+                        height: 50,
+                        width: 200,
+                        child: Center(
+                            child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Announcement"),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            caorusel_index == 0
+                                ? const Icon(
+                                    Icons.campaign,
+                                    color: Colors.white,
+                                  )
+                                : const Icon(
+                                    Icons.campaign_outlined,
+                                    color: Colors.white,
+                                  )
+                          ],
+                        )))),
+                InkWell(
+                    onTap: () {
+                      caorusel_index = 1;
+                      _onItemTapped(caorusel_index);
+                    },
+                    child: Container(
+                        decoration: caorusel_index == 1
+                            ? BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Colors.white.withOpacity(0.5))),
+                              )
+                            : null,
+                        height: 50,
+                        width: 150,
+                        child: Center(
+                            child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Tasks"),
+                            const SizedBox(width: 10,),
+                            caorusel_index == 1
+                                ? const Icon(
+                                    Icons.task,
+                                    color: Colors.white,
+                                  )
+                                : const Icon(
+                                    Icons.task_outlined,
+                                    color: Colors.white,
+                                  )
+                          ],
+                        ))))
+              ],
+            ),
           ),
           _getBody(_selectedIndex)
         ],
