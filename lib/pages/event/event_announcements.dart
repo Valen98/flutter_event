@@ -123,16 +123,28 @@ class _EventAnnouncementsState extends State<EventAnnouncements> {
                 } else {
                   var announcements =
                       snapshot.data!.docs.map((doc) => doc.data()).toList();
-
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: announcements.length,
-                      itemBuilder: (context, index) {
-                        var announcement = announcements[index];
-                        return AnnouncementCard(announcement: announcement);
-                      },
-                    ),
-                  );
+                  if (announcements.isNotEmpty) {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: announcements.length,
+                        itemBuilder: (context, index) {
+                          var announcement = announcements[index];
+                          return AnnouncementCard(announcement: announcement);
+                        },
+                      ),
+                    );
+                  } else {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "No announcements found!",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    );
+                  }
                 }
               }),
         ],

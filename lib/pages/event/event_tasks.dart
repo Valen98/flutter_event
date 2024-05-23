@@ -135,7 +135,15 @@ class _EventTasksState extends State<EventTasks> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-          return const Text('No tasks found');
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
+                "No tasks found!",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ),
+          );
         } else {
           var tasks = snapshot.data!.docs.map((doc) => doc.data()).toList();
           return Expanded(
