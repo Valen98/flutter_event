@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_button.dart';
+import 'package:event/pages/event/event_announcements.dart';
 import 'package:event/pages/event/event_chat.dart';
 import 'package:event/pages/event/event_tasks.dart';
 import 'package:event/services/event/event_service.dart';
@@ -26,6 +27,7 @@ class _EventPageState extends State<EventPage> {
   List<dynamic> alreadyMember = [];
   bool iconVisible = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int _selectedIndex = 0;
 
   Map<String, Color> colors = {
     'Purple': const Color(0xff533AC7),
@@ -64,6 +66,12 @@ class _EventPageState extends State<EventPage> {
     setState(() {
       friendsID.remove(userID);
       iconVisible = false;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
     });
   }
 
@@ -284,7 +292,7 @@ class _EventPageState extends State<EventPage> {
                         fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ),
-                EventTasks(eventID: widget.event['eventID'])
+                carousel()
               ],
             ),
           ),
@@ -350,5 +358,48 @@ class _EventPageState extends State<EventPage> {
                 "Invited",
                 style: TextStyle(color: Colors.grey, fontSize: 12),
               ));
+  }
+
+  Widget carousel() {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              InkWell(
+                  onTap: () {
+                    _onItemTapped(0);
+                  },
+                  child: const Text("Announcement")),
+              InkWell(
+                  onTap: () {
+                    _onItemTapped(1);
+                  },
+                  child: const Text("Tasks"))
+            ],
+          ),
+          _getBody(_selectedIndex)
+        ],
+      ),
+    );
+  }
+
+  Widget _getBody(int index) {
+    switch (index) {
+      case 0:
+        return EventAnnouncements(event: widget.event);
+      case 1:
+        return EventTasks(eventID: widget.event['eventID']);
+      /* case 2:
+        return NewEventPage(onHomePressed: () {
+          _onItemTapped(0);
+        });
+      case 3:
+        return const ProfilePage(); */
+      default:
+        return Container();
+    }
   }
 }

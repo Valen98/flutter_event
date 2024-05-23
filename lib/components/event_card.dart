@@ -19,7 +19,7 @@ class EventCard extends StatelessWidget {
       'Orange': const Color(0xffE0831F)
     };
 
-    return Container(
+    return SizedBox(
       width: 350, // Fixed width
       height: 180,
       child: Material(
@@ -41,7 +41,7 @@ class EventCard extends StatelessWidget {
           },
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: Container(
+            child: SizedBox(
               width: 350, // Fixed width
               height: 180,
               child: Padding(

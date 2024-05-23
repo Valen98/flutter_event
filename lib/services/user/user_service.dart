@@ -7,7 +7,7 @@ class UserService extends ChangeNotifier {
   Stream<DocumentSnapshot<Map<String, dynamic>>> getProfile(String uid) {
     return _firestore.collection('users').doc(uid).snapshots();
   }
-
+  
   Future<String> getDisplayName(String uid) async {
     try {
       // Fetch the document snapshot

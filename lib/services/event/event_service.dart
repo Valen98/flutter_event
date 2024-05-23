@@ -73,7 +73,10 @@ class EventService extends ChangeNotifier {
   }
 
   Query<Map<String, dynamic>> getEvents(String eventID) {
-    return _firestore.collection('events').where('eventID', isEqualTo: eventID);
+    return _firestore
+        .collection('events')
+        .where('eventID', isEqualTo: eventID)
+        .orderBy('eventDate', descending: false);
   }
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> getEvent(String eventID) {
