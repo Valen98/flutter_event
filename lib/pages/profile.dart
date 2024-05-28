@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/components/event_card.dart';
 import 'package:event/components/my_app_bar.dart';
+import 'package:event/services/auth/auth_services.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,19 +19,31 @@ class _ProfilePageState extends State<ProfilePage> {
   final UserService _profileService = UserService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final EventService _eventService = EventService();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late DocumentSnapshot data;
+
+  void signOut() {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    authService.signOut();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: MyAppBar(
-          title: 'Profile', onPressed: () {}, icon: const Icon(Icons.settings)),
+          title: 'Profile',
+          onPressed: () {
+            _scaffoldKey.currentState!.openEndDrawer();
+          },
+          icon: const Icon(Icons.settings)),
       body: Padding(
         padding: EdgeInsets.all(8.0),
         child: (Column(
           children: [_buildProfile()],
         )),
       ),
+      endDrawer: _drawer(context),
     );
   }
 
@@ -226,6 +240,63 @@ class _ProfilePageState extends State<ProfilePage> {
           }
         }
       },
+    );
+  }
+
+  Drawer _drawer(BuildContext context) {
+    return Drawer(
+      backgroundColor: const Color(0xff1D1D1D),
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+              decoration: const BoxDecoration(color: Color(0xff1D1D1D)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Profile Settings"),
+                  IconButton(
+                    onPressed: () => signOut(),
+                    icon: const Icon(
+                      color: Colors.white,
+                      Icons.logout,
+                    ),
+                  ),
+                ],
+              )),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(
+                      Icons.edit,
+                      color: Color(0xff533AC7),
+                    ),
+                    title: const Text(
+                      "Edit Profile",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.add_box,
+                      color: Color(0xff533AC7),
+                    ),
+                    title: const Text(
+                      "Placeholder",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
