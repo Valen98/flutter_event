@@ -19,7 +19,7 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-  DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm");
+  final DateFormat dateFormat = DateFormat("dd/MM HH:mm");
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final EventService _eventService = EventService();
   final UserService _userService = UserService();
@@ -428,7 +428,9 @@ class _EventPageState extends State<EventPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text("Tasks"),
-                            const SizedBox(width: 10,),
+                            const SizedBox(
+                              width: 10,
+                            ),
                             caorusel_index == 1
                                 ? const Icon(
                                     Icons.task,

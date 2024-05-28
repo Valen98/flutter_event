@@ -8,7 +8,7 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm");
+    final DateFormat dateFormat = DateFormat("dd/MM HH:mm");
 
     Map<String, Color> colors = {
       'Purple': const Color(0xff533AC7),

@@ -20,9 +20,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final EventService _eventService = EventService();
-  void signOut() {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    authService.signOut();
+
+  void addEvent() {
+    _onItemTapped(2);
   }
 
   int _selectedIndex = 0;
@@ -51,6 +51,7 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const SearchPage();
       case 2:
+        //onHomePressed is so that when an event is created, it returns back to home page
         return NewEventPage(onHomePressed: () {
           _onItemTapped(0);
         });
@@ -64,10 +65,10 @@ class _HomePageState extends State<HomePage> {
   Widget home() {
     return Scaffold(
       appBar: MyAppBar(
-        onPressed: signOut,
+        onPressed: () => addEvent(),
         title: "Event App",
         icon: const Icon(
-          Icons.logout,
+          Icons.add,
         ),
       ),
       body: _builderEventList(),
