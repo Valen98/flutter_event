@@ -4,11 +4,9 @@ import 'package:event/components/my_navigation_bar.dart';
 import 'package:event/pages/event/new_event.dart';
 import 'package:event/pages/profile.dart';
 import 'package:event/pages/search.dart';
-import 'package:event/services/auth/auth_services.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
