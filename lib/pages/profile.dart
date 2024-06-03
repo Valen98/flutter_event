@@ -38,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
           },
           icon: const Icon(Icons.settings)),
       body: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: (Column(
           children: [_buildProfile()],
         )),
@@ -70,23 +70,38 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget profile() {
     List<dynamic> friends = data['friends'];
+    String displayName = data['displayName'];
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+          Padding(
+            padding: const EdgeInsets.only(top: 10, left: 15, right: 10),
             child: Row(
               children: [
-                const SizedBox(height: 10),
+                Container(
+                  alignment: Alignment.center,
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.blue,
+                  ),
+                  child: Text(
+                    displayName[0],
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w800),
+                  ),
+                ),
+                const SizedBox(width: 10),
                 Text(
-                  data['displayName'],
+                  displayName,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(width: 80),
+                const SizedBox(width: 100),
                 _eventNr(),
                 const SizedBox(
                   width: 40,
@@ -114,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 myEvents(),
               ],
             ),
