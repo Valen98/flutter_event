@@ -10,6 +10,7 @@
 .svn/
 migrate_working_dir/
 .env
+ios/Runner/ApiKey.plist
 
 # IntelliJ related
 *.iml
