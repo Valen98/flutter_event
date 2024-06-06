@@ -4,6 +4,8 @@ import 'package:event/components/my_dropdown.dart';
 import 'package:event/components/my_text_field.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:flutter/material.dart';
+import 'package:map_location_picker/map_location_picker.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class NewEventPage extends StatefulWidget {
   final VoidCallback onHomePressed;
@@ -23,6 +25,8 @@ class _NewEventPageState extends State<NewEventPage> {
   late int _hour;
   late int _minute;
   String? _selectedColor;
+  String address = "null";
+  String autocompletePlace = "null";
 
   Map<String, Color> colors = {
     'Purple': const Color(0xff533AC7),
@@ -175,11 +179,53 @@ class _NewEventPageState extends State<NewEventPage> {
                     ),
                   ),
                 ),
+                IconButton(
+                  color: Colors.black,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MapLocationPicker(
+                            //GET API KEY FROM .env FOR SAFETY
+                            apiKey: dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '',
+                            popOnNextButtonTaped: true,
+                            currentLatLng: const LatLng(29.146727, 76.464895),
+                            onNext: (GeocodingResult? result) {
+                              if (result != null) {
+                                setState(() {
+                                  //TODO trim the address to just keep the address
+                                  //and send it to firebase
+                                  address = result.formattedAddress ?? "";
+                                  //placeID to get the id of location.
+                                });
+                              }
+                            },
+                            onSuggestionSelected:
+                                (PlacesDetailsResponse? result) {
+                              if (result != null) {
+                                setState(() {
+                                  autocompletePlace =
+                                      result.result.formattedAddress ?? "";
+                                });
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.location_on,
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
             const SizedBox(
               height: 25,
             ),
+            Text("This is the address: $address"),
             Row(
               children: [
                 Expanded(
