@@ -203,9 +203,9 @@ class _NewEventPageState extends State<NewEventPage> {
                             onNext: (GeocodingResult? result) {
                               if (result != null) {
                                 setState(() {
-                                  //TODO trim the fullAddress to just keep the address
-                                  //and send it to firebase
+                                  //trim the fullAddress to just keep the address for easier usage
                                   fullAddress = result.formattedAddress ?? "";
+                                  //Format: Address, postnumber city, country
                                   address = fullAddress.split(',')[0];
                                   addressID = result.placeId;
                                 });

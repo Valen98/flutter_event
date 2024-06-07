@@ -3,6 +3,7 @@ import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_button.dart';
 import 'package:event/pages/event/event_announcements.dart';
 import 'package:event/pages/event/event_chat.dart';
+import 'package:event/pages/event/event_map.dart';
 import 'package:event/pages/event/event_tasks.dart';
 import 'package:event/services/event/event_service.dart';
 import 'package:event/services/user/user_service.dart';
@@ -75,6 +76,28 @@ class _EventPageState extends State<EventPage> {
     });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        key: _scaffoldKey,
+        appBar: MyAppBar(
+          title: "Event ${widget.event['eventName']}",
+          onPressed: () {
+            _scaffoldKey.currentState!.openEndDrawer();
+          },
+          bgColor: widget.event['color'] != "" && widget.event['color'] != null
+              ? colors[widget.event['color']]!.withOpacity(0.6)
+              : const Color(0xff1D1D1D),
+          icon: widget.event['hostID'] == _auth.currentUser!.uid
+              ? const Icon(Icons.settings, color: Colors.white)
+              : null,
+        ),
+        body: _eventPage(context),
+        endDrawer: widget.event['hostID'] == _auth.currentUser!.uid
+            ? _drawer(context)
+            : null);
+  }
+
   Future<void> _openModal() async {
     return showDialog(
         context: context,
@@ -141,28 +164,6 @@ class _EventPageState extends State<EventPage> {
             ),
           );
         });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        key: _scaffoldKey,
-        appBar: MyAppBar(
-          title: "Event ${widget.event['eventName']}",
-          onPressed: () {
-            _scaffoldKey.currentState!.openEndDrawer();
-          },
-          bgColor: widget.event['color'] != "" && widget.event['color'] != null
-              ? colors[widget.event['color']]!.withOpacity(0.6)
-              : const Color(0xff1D1D1D),
-          icon: widget.event['hostID'] == _auth.currentUser!.uid
-              ? const Icon(Icons.settings, color: Colors.white)
-              : null,
-        ),
-        body: _eventPage(context),
-        endDrawer: widget.event['hostID'] == _auth.currentUser!.uid
-            ? _drawer(context)
-            : null);
   }
 
   Drawer _drawer(BuildContext context) {
@@ -281,6 +282,14 @@ class _EventPageState extends State<EventPage> {
                         fontSize: 12, fontWeight: FontWeight.w300),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Text(
+                    "Location: ${widget.event['fullAddress']}",
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w300),
+                  ),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -360,6 +369,7 @@ class _EventPageState extends State<EventPage> {
               ));
   }
 
+  // ignore: non_constant_identifier_names
   int caorusel_index = 0;
   Widget carousel() {
     return Expanded(
@@ -386,7 +396,7 @@ class _EventPageState extends State<EventPage> {
                               )
                             : null,
                         height: 50,
-                        width: 200,
+                        width: 175,
                         child: Center(
                             child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -421,7 +431,7 @@ class _EventPageState extends State<EventPage> {
                               )
                             : null,
                         height: 50,
-                        width: 150,
+                        width: 125,
                         child: Center(
                             child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -441,6 +451,37 @@ class _EventPageState extends State<EventPage> {
                                     color: Colors.white,
                                   )
                           ],
+                        )))),
+                InkWell(
+                    onTap: () {
+                      caorusel_index = 2;
+                      _onItemTapped(caorusel_index);
+                    },
+                    child: Container(
+                        decoration: caorusel_index == 2
+                            ? BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Colors.white.withOpacity(0.5))),
+                              )
+                            : null,
+                        height: 50,
+                        width: 75,
+                        child: Center(
+                            child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            caorusel_index == 1
+                                ? const Icon(
+                                    Icons.location_pin,
+                                    color: Colors.white,
+                                  )
+                                : const Icon(
+                                    Icons.location_pin,
+                                    color: Colors.white,
+                                  )
+                          ],
                         ))))
               ],
             ),
@@ -457,10 +498,9 @@ class _EventPageState extends State<EventPage> {
         return EventAnnouncements(event: widget.event);
       case 1:
         return EventTasks(eventID: widget.event['eventID']);
-      /* case 2:
-        return NewEventPage(onHomePressed: () {
-          _onItemTapped(0);
-        });
+      case 2:
+        return EventMap(addressID: widget.event['addressID']);
+      /*
       case 3:
         return const ProfilePage(); */
       default:

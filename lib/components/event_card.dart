@@ -120,11 +120,11 @@ class EventCard extends StatelessWidget {
                               size: 16,
                             ),
                             const SizedBox(width: 8.0),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 8.0),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
                               child: Text(
-                                'Location',
-                                style: TextStyle(
+                                event['address'],
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w300,
                                 ),
