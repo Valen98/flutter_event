@@ -27,6 +27,8 @@ class _NewEventPageState extends State<NewEventPage> {
   String? _selectedColor;
   String address = "null";
   String autocompletePlace = "null";
+  String fullAddress = "null";
+  String addressID = "null";
 
   Map<String, Color> colors = {
     'Purple': const Color(0xff533AC7),
@@ -41,11 +43,18 @@ class _NewEventPageState extends State<NewEventPage> {
     if (eventNameController.text.isNotEmpty &&
         eventDescriptionController.text.isNotEmpty &&
         eventDateController.text.isNotEmpty &&
-        eventTimeController.text.isNotEmpty) {
+        eventTimeController.text.isNotEmpty &&
+        fullAddress != "null") {
       DateTime eventDate =
           _pickedDate.add(Duration(hours: _hour, minutes: _minute));
-      await _eventService.createEvent(eventNameController.text,
-          eventDescriptionController.text, eventDate, _selectedColor);
+      await _eventService.createEvent(
+          eventNameController.text,
+          eventDescriptionController.text,
+          eventDate,
+          _selectedColor,
+          address,
+          fullAddress,
+          addressID);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
               "Event created with the name: ${eventNameController.text}")));
@@ -194,10 +203,11 @@ class _NewEventPageState extends State<NewEventPage> {
                             onNext: (GeocodingResult? result) {
                               if (result != null) {
                                 setState(() {
-                                  //TODO trim the address to just keep the address
+                                  //TODO trim the fullAddress to just keep the address
                                   //and send it to firebase
-                                  address = result.formattedAddress ?? "";
-                                  //placeID to get the id of location.
+                                  fullAddress = result.formattedAddress ?? "";
+                                  address = fullAddress.split(',')[0];
+                                  addressID = result.placeId;
                                 });
                               }
                             },
@@ -225,7 +235,6 @@ class _NewEventPageState extends State<NewEventPage> {
             const SizedBox(
               height: 25,
             ),
-            Text("This is the address: $address"),
             Row(
               children: [
                 Expanded(

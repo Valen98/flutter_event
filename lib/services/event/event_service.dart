@@ -11,8 +11,14 @@ class EventService extends ChangeNotifier {
   final UserService _userService = UserService();
 
   //Create Event
-  Future<void> createEvent(String eventName, String eventDesc,
-      DateTime eventDate, String? color) async {
+  Future<void> createEvent(
+      String eventName,
+      String eventDesc,
+      DateTime eventDate,
+      String? color,
+      String address,
+      String fullAddress,
+      String addressID) async {
     final String currentUserID = _firebaseAuth.currentUser!.uid;
     final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
     final Timestamp timestamp = Timestamp.now();
@@ -27,7 +33,10 @@ class EventService extends ChangeNotifier {
         created: timestamp,
         eventID: "",
         color: color,
-        members: [currentUserID]);
+        members: [currentUserID],
+        address: address,
+        fullAddress: fullAddress,
+        addressID: addressID);
 
     DocumentReference eventRef =
         await _firestore.collection('events').add(newEvent.toMap());

@@ -11,6 +11,9 @@ class Event {
   final String eventID;
   final String? color;
   final List members;
+  final String? address;
+  final String? fullAddress;
+  final String? addressID;
 
   Event({
     required this.hostID,
@@ -22,6 +25,9 @@ class Event {
     required this.created,
     required this.eventID,
     required this.members,
+    this.address,
+    this.fullAddress,
+    this.addressID,
     this.color,
   });
 
@@ -37,7 +43,10 @@ class Event {
       'created': created,
       'eventID': eventID,
       'color': color,
-      'members': members
+      'members': members,
+      'address': address,
+      'fullAddress': fullAddress,
+      'addressID': addressID
     };
   }
 }
