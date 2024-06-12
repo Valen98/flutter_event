@@ -4,6 +4,7 @@ class Request {
   String recieverID;
   String recieverName;
   String? eventID;
+  String? eventName;
   DateTime dateTime;
   String type;
 
@@ -15,6 +16,7 @@ class Request {
     required this.dateTime,
     required this.type,
     this.eventID,
+    this.eventName,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class Request {
       'recieverName': recieverName,
       'dateTime': dateTime,
       'eventID': eventID,
+      'eventName': eventName,
       'type': type,
     };
   }

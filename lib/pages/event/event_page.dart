@@ -29,6 +29,7 @@ class _EventPageState extends State<EventPage> {
   bool iconVisible = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
+  String senderName = "";
 
   Map<String, Color> colors = {
     'Purple': const Color(0xff533AC7),
@@ -42,7 +43,15 @@ class _EventPageState extends State<EventPage> {
   @override
   void initState() {
     getFriendsID();
+    getSenderName();
     super.initState();
+  }
+
+  void getSenderName() async {
+    String sName = await _userService.getDisplayName(_auth.currentUser!.uid);
+    setState(() {
+      senderName = sName;
+    });
   }
 
   void getFriendsID() async {
@@ -355,7 +364,12 @@ class _EventPageState extends State<EventPage> {
             ? IconButton(
                 onPressed: () {
                   _eventService.addUserToEvent(
-                      user['uid'], widget.event['eventID']);
+                      _auth.currentUser!.uid,
+                      senderName,
+                      user['uid'],
+                      widget.event['eventID'],
+                      user['displayName'],
+                      widget.event['eventName']);
                   addedFriend(user['uid']);
                 },
                 icon: const Icon(

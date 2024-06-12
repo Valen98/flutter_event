@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/model/event.dart';
+import 'package:event/model/request.dart';
 import 'package:event/services/event/event_chat_service.dart';
 import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -92,13 +93,38 @@ class EventService extends ChangeNotifier {
     return _firestore.collection('events').doc(eventID).snapshots();
   }
 
-  void addUserToEvent(String userID, String eventID) async {
+  void addUserToEvent(String senderID, String senderName, String recieverID,
+      recieverName, String eventID, String eventName) async {
+    Request newRequest = Request(
+        sender: senderID,
+        senderName: senderName,
+        recieverID: recieverID,
+        recieverName: recieverName,
+        eventID: eventID,
+        eventName: eventName,
+        dateTime: DateTime.now(),
+        type: "event");
+
+    await _firestore
+        .collection('users')
+        .doc(senderID)
+        .collection("pending")
+        .add(newRequest.toMap());
+
+    await _firestore
+        .collection('users')
+        .doc(recieverID)
+        .collection('recieved')
+        .add((newRequest.toMap()));
+
+    /*
     await _firestore.collection('users').doc(userID).update({
       'events': FieldValue.arrayUnion([eventID])
     });
     await _firestore.collection('events').doc(eventID).update({
       'members': FieldValue.arrayUnion([userID])
-    });
+    }); 
+    */
   }
 
   void deleteEvent(Map<String, dynamic> event) async {
