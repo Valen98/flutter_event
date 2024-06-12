@@ -6,6 +6,7 @@ import 'package:event/pages/notification.dart';
 import 'package:event/pages/profile.dart';
 import 'package:event/pages/search.dart';
 import 'package:event/services/event/event_service.dart';
+import 'package:event/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final EventService _eventService = EventService();
+  final UserService _userService = UserService();
+  String numberOfRequests = "";
 
   void addEvent() {
     _onItemTapped(2);
@@ -34,6 +37,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    numberOfRequests =
+        _userService.getRequestNumber(_auth.currentUser!.uid).toString();
     return Scaffold(
       body: _getBody(_selectedIndex),
       bottomNavigationBar: MyNavBar2(
@@ -64,11 +69,49 @@ class _HomePageState extends State<HomePage> {
   Widget home() {
     return Scaffold(
       appBar: MyAppBar(
-        onPressed: () => Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const NotificationPage())),
         title: "Event App",
-        icon: const Icon(
-          Icons.notifications_outlined,
+        badge: StreamBuilder<int>(
+          stream: _userService.getRequestNumber(_auth.currentUser!.uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // While waiting for data from the stream, display a default badge with no label
+              return const Badge(
+                child: Icon(Icons.notifications_outlined),
+              );
+            } else if (snapshot.hasError) {
+              // If there's an error with the stream, display a badge with no label
+              return const Badge(
+                child: Icon(Icons.notifications_outlined),
+              );
+            } else {
+              // Display the badge with the number of requests from the stream
+              if (snapshot.data! > 0) {
+                return Badge(
+                  label: Text(snapshot.data.toString()),
+                  offset: const Offset(-7, 7),
+                  child: IconButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationPage(),
+                      ),
+                    ),
+                    icon: const Icon(Icons.notifications),
+                  ),
+                );
+              } else {
+                return IconButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationPage(),
+                    ),
+                  ),
+                  icon: const Icon(Icons.notifications_outlined),
+                );
+              }
+            }
+          },
         ),
       ),
       body: _builderEventList(),

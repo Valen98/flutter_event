@@ -37,6 +37,11 @@ class _EventRequestState extends State<EventRequest> {
                   _eventService.removeEventRequest(widget.request['reciever'],
                       widget.request['sender'], widget.request['requestID']);
 
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content:
+                        Text('Joined event: ${widget.request['eventName']}'),
+                  ));
+
                   widget.onAccept();
                 },
                 child: Container(
@@ -60,7 +65,18 @@ class _EventRequestState extends State<EventRequest> {
                   color: Colors.red,
                 ),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    //Delete the invite
+                    _eventService.removeEventRequest(widget.request['reciever'],
+                        widget.request['sender'], widget.request['requestID']);
+
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          'Declined the event: ${widget.request['eventName']}'),
+                    ));
+
+                    widget.onAccept();
+                  },
                   borderRadius: BorderRadius.circular(16),
                   child: const Center(child: Icon(Icons.remove)),
                 ),

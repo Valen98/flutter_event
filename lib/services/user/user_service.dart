@@ -94,6 +94,15 @@ class UserService extends ChangeNotifier {
     */
   }
 
+  Stream<int> getRequestNumber(String currentUserId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserId)
+        .collection('recieved')
+        .snapshots()
+        .map((snapshot) => snapshot.size);
+  }
+
   Future<void> acceptFriendRequest(String currentUser, String friendID) async {
     await _firestore.collection('users').doc(currentUser).update({
       'friends': FieldValue.arrayUnion([friendID])

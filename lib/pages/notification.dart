@@ -89,6 +89,13 @@ class _NotificationPageState extends State<NotificationPage> {
                                 _removeFriendRequest(doc);
                               },
                             )),
+                        const Divider(
+                          thickness: 3,
+                          height: 3,
+                          indent: 3,
+                          endIndent: 3,
+                          color: Colors.black,
+                        ),
                         if (eventRequests.isNotEmpty)
                           const Padding(
                             padding: EdgeInsets.all(8.0),

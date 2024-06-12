@@ -5,6 +5,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Icon? icon;
   final Color? bgColor;
+  final StreamBuilder<int>? badge;
 
   const MyAppBar({
     super.key,
@@ -12,6 +13,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.icon,
     this.bgColor,
+    this.badge,
   });
 
   @override
@@ -27,6 +29,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: icon!,
         ),
       );
+    } else if (badge != null) {
+      actions.add(badge!);
     }
     return AppBar(
       title: Text(

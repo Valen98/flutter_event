@@ -13,6 +13,7 @@ class FriendRequest extends StatefulWidget {
 
 class _FriendRequestState extends State<FriendRequest> {
   final UserService _userService = UserService();
+  String dataTest = "";
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -37,7 +38,7 @@ class _FriendRequestState extends State<FriendRequest> {
                       widget.request['sender'], widget.request['requestID']);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('${widget.request['senderName']} Added'),
+                      content: Text('Added: ${widget.request['senderName']}'),
                     ),
                   );
                   widget.onAccept();
@@ -64,7 +65,18 @@ class _FriendRequestState extends State<FriendRequest> {
                   color: Colors.red,
                 ),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    //Delete the invite
+                    _userService.removeFriendRequest(widget.request['reciever'],
+                        widget.request['sender'], widget.request['requestID']);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'Declined user: ${widget.request['senderName']}'),
+                      ),
+                    );
+                    widget.onAccept();
+                  },
                   borderRadius: BorderRadius.circular(16),
                   child: const Center(child: Icon(Icons.remove)),
                 ),
