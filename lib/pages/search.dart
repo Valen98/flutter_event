@@ -19,12 +19,20 @@ class _SearchPageState extends State<SearchPage> {
   List _allUsers = [];
   List _resultList = [];
   bool iconVisible = true;
-
+  String senderName = "";
   @override
   void initState() {
     getAllUserStream();
     _searchUserController.addListener(_onSearchChanged);
+    getSenderName();
     super.initState();
+  }
+
+  void getSenderName() async {
+    String sName = await _userService.getDisplayName(_auth.currentUser!.uid);
+    setState(() {
+      senderName = sName;
+    });
   }
 
   _onSearchChanged() {
@@ -72,9 +80,9 @@ class _SearchPageState extends State<SearchPage> {
     super.didChangeDependencies();
   }
 
-  void addFriend(String recieverID) {
-    _userService.friendRequest(
-        recieverID, _auth.currentUser!.uid, "friendRequest");
+  void addFriend(String recieverID, String recieverName) async {
+    _userService.friendRequest(_auth.currentUser!.uid, senderName, recieverID,
+        recieverName, "friendRequest");
     setState(() {
       iconVisible = false;
     });
@@ -116,8 +124,10 @@ class _SearchPageState extends State<SearchPage> {
                             trailing: iconVisible
                                 ? IconButton(
                                     onPressed: () {
-                                      addFriend(user[
-                                          'uid']); // Perform action when icon is pressed
+                                      addFriend(
+                                          user['uid'],
+                                          user[
+                                              'displayName']); // Perform action when icon is pressed
                                     },
                                     icon: const Icon(
                                       Icons.add_box,

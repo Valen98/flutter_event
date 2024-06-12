@@ -1,13 +1,17 @@
 class Request {
   String sender;
-  String reciever;
+  String senderName;
+  String recieverID;
+  String recieverName;
   String? eventID;
   DateTime dateTime;
   String type;
 
   Request({
     required this.sender,
-    required this.reciever,
+    required this.senderName,
+    required this.recieverID,
+    required this.recieverName,
     required this.dateTime,
     required this.type,
     this.eventID,
@@ -16,7 +20,9 @@ class Request {
   Map<String, dynamic> toMap() {
     return {
       'sender': sender,
-      'reciever': reciever,
+      'senderName': senderName,
+      'reciever': recieverID,
+      'recieverName': recieverName,
       'dateTime': dateTime,
       'eventID': eventID,
       'type': type,

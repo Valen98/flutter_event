@@ -19,9 +19,11 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late DocumentSnapshot data;
 
-  void addFriend(String recieverID) {
-    _userService.friendRequest(
-        recieverID, _auth.currentUser!.uid, "friendRequest");
+  void addFriend(String recieverID, String recieverName) async {
+    String senderName =
+        await _userService.getDisplayName(_auth.currentUser!.uid);
+    _userService.friendRequest(_auth.currentUser!.uid, senderName, recieverID,
+        recieverName, "friendRequest");
   }
 
   @override
@@ -88,7 +90,7 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
               children: [
                 MyButton(
                     onTap: () {
-                      addFriend(data['uid']);
+                      addFriend(data['uid'], data['displayName']);
                     },
                     bgColor: Colors.blue,
                     text: 'Add Friend'),

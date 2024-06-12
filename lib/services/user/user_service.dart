@@ -45,12 +45,14 @@ class UserService extends ChangeNotifier {
     return _firestore.collection('users').get();
   }
 
-  Future<void> friendRequest(
-      String recieverID, String senderID, String type) async {
+  Future<void> friendRequest(String senderID, String senderName,
+      String recieverID, String recieverName, String type) async {
     //Sender
     Request newRequest = Request(
         sender: senderID,
-        reciever: recieverID,
+        senderName: senderName,
+        recieverID: recieverID,
+        recieverName: recieverName,
         dateTime: DateTime.now(),
         type: type);
 
