@@ -1,14 +1,18 @@
+import 'package:event/services/event/event_service.dart';
 import 'package:flutter/material.dart';
 
 class EventRequest extends StatefulWidget {
   final Map<String, dynamic> request;
-  const EventRequest({super.key, required this.request});
+  final VoidCallback onAccept;
+  const EventRequest(
+      {super.key, required this.request, required this.onAccept});
 
   @override
   State<EventRequest> createState() => _EventRequestState();
 }
 
 class _EventRequestState extends State<EventRequest> {
+  final EventService _eventService = EventService();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -17,21 +21,31 @@ class _EventRequestState extends State<EventRequest> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            widget.request['senderName'],
+            widget.request['eventName'],
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           Row(
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.green,
-                ),
-                child: InkWell(
-                  onTap: () {},
-                  borderRadius: BorderRadius.circular(16),
+              InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  //Accept the invite
+                  _eventService.acceptEventRequest(
+                      widget.request['reciever'], widget.request['eventID']);
+
+                  //Delete the invite
+                  _eventService.removeEventRequest(widget.request['reciever'],
+                      widget.request['sender'], widget.request['requestID']);
+
+                  widget.onAccept();
+                },
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.green,
+                  ),
                   child: const Center(child: Icon(Icons.add)),
                 ),
               ),

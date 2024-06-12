@@ -367,8 +367,8 @@ class _EventPageState extends State<EventPage> {
                       _auth.currentUser!.uid,
                       senderName,
                       user['uid'],
-                      widget.event['eventID'],
                       user['displayName'],
+                      widget.event['eventID'],
                       widget.event['eventName']);
                   addedFriend(user['uid']);
                 },

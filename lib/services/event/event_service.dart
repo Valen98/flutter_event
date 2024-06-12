@@ -102,10 +102,11 @@ class EventService extends ChangeNotifier {
         recieverName: recieverName,
         eventID: eventID,
         eventName: eventName,
+        requestID: "",
         dateTime: DateTime.now(),
         type: "event");
 
-    await _firestore
+    DocumentReference requestRef = await _firestore
         .collection('users')
         .doc(senderID)
         .collection("pending")
@@ -113,18 +114,54 @@ class EventService extends ChangeNotifier {
 
     await _firestore
         .collection('users')
+        .doc(senderID)
+        .collection('pending')
+        .doc(requestRef.id)
+        .update({'requestID': requestRef.id});
+
+    Request newRequestWithID = Request(
+        sender: senderID,
+        senderName: senderName,
+        recieverID: recieverID,
+        recieverName: recieverName,
+        eventID: eventID,
+        eventName: eventName,
+        requestID: requestRef.id,
+        dateTime: DateTime.now(),
+        type: "event");
+
+    await _firestore
+        .collection('users')
         .doc(recieverID)
         .collection('recieved')
-        .add((newRequest.toMap()));
+        .doc(requestRef.id)
+        .set(newRequestWithID.toMap());
+  }
 
-    /*
-    await _firestore.collection('users').doc(userID).update({
+  Future<void> acceptEventRequest(String currentUser, String eventID) async {
+    await _firestore.collection('users').doc(currentUser).update({
       'events': FieldValue.arrayUnion([eventID])
     });
     await _firestore.collection('events').doc(eventID).update({
-      'members': FieldValue.arrayUnion([userID])
-    }); 
-    */
+      'members': FieldValue.arrayUnion([currentUser])
+    });
+  }
+
+  Future<void> removeEventRequest(
+      String currentUser, friendID, String requestID) async {
+    await _firestore
+        .collection('users')
+        .doc(currentUser)
+        .collection('recieved')
+        .doc(requestID)
+        .delete();
+
+    await _firestore
+        .collection('users')
+        .doc(friendID)
+        .collection('pending')
+        .doc(requestID)
+        .delete();
   }
 
   void deleteEvent(Map<String, dynamic> event) async {

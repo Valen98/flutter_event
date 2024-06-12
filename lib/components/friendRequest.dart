@@ -1,14 +1,18 @@
+import 'package:event/services/user/user_service.dart';
 import 'package:flutter/material.dart';
 
 class FriendRequest extends StatefulWidget {
   final Map<String, dynamic> request;
-  const FriendRequest({super.key, required this.request});
+  final VoidCallback onAccept;
+  const FriendRequest(
+      {super.key, required this.request, required this.onAccept});
 
   @override
   State<FriendRequest> createState() => _FriendRequestState();
 }
 
 class _FriendRequestState extends State<FriendRequest> {
+  final UserService _userService = UserService();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -22,16 +26,30 @@ class _FriendRequestState extends State<FriendRequest> {
           ),
           Row(
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.green,
-                ),
-                child: InkWell(
-                  onTap: () {},
-                  borderRadius: BorderRadius.circular(16),
+              InkWell(
+                onTap: () {
+                  //Accept the invite
+                  _userService.acceptFriendRequest(
+                      widget.request['sender'], widget.request['reciever']);
+
+                  //Delete the invite
+                  _userService.removeFriendRequest(widget.request['reciever'],
+                      widget.request['sender'], widget.request['requestID']);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${widget.request['senderName']} Added'),
+                    ),
+                  );
+                  widget.onAccept();
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.green,
+                  ),
                   child: const Center(child: Icon(Icons.add)),
                 ),
               ),

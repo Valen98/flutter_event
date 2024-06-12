@@ -7,6 +7,7 @@ class Request {
   String? eventName;
   DateTime dateTime;
   String type;
+  String requestID;
 
   Request({
     required this.sender,
@@ -17,6 +18,7 @@ class Request {
     required this.type,
     this.eventID,
     this.eventName,
+    required this.requestID,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,9 +28,10 @@ class Request {
       'reciever': recieverID,
       'recieverName': recieverName,
       'dateTime': dateTime,
+      'type': type,
       'eventID': eventID,
       'eventName': eventName,
-      'type': type,
+      'requestID': requestID,
     };
   }
 }

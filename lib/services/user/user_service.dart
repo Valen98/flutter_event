@@ -53,27 +53,80 @@ class UserService extends ChangeNotifier {
         senderName: senderName,
         recieverID: recieverID,
         recieverName: recieverName,
+        requestID: "",
         dateTime: DateTime.now(),
         type: type);
 
-    await _firestore
+    DocumentReference requestRef = await _firestore
         .collection('users')
         .doc(senderID)
         .collection("pending")
         .add(newRequest.toMap());
 
-    //Reciever
+    await _firestore
+        .collection('users')
+        .doc(senderID)
+        .collection('pending')
+        .doc(requestRef.id)
+        .update({'requestID': requestRef.id});
+
+    //Save into Recievers collections
+    Request newRequestWithID = Request(
+        sender: senderID,
+        senderName: senderName,
+        recieverID: recieverID,
+        recieverName: recieverName,
+        requestID: requestRef.id,
+        dateTime: DateTime.now(),
+        type: type);
+
     await _firestore
         .collection('users')
         .doc(recieverID)
-        .collection("recieved")
-        .add(newRequest.toMap());
+        .collection('recieved')
+        .doc(requestRef.id)
+        .set(newRequestWithID.toMap());
 
     /*
     await _firestore.collection('users').doc(recieverID).update({
       'friends': FieldValue.arrayUnion([senderID])
     });
     */
+  }
+
+  Future<void> acceptFriendRequest(String currentUser, String friendID) async {
+    await _firestore.collection('users').doc(currentUser).update({
+      'friends': FieldValue.arrayUnion([friendID])
+    });
+
+    await _firestore.collection('users').doc(friendID).update({
+      'friends': FieldValue.arrayUnion([currentUser])
+    });
+  }
+
+  Future<void> removeFriendRequest(
+    String currentUser,
+    String friendID,
+    String requestID,
+  ) async {
+    //The user that recieves the invite is current User. Therefore delete from current user
+    //Then delete from the user sending the invite inside the pending request.
+
+    //Delete from recieved
+    await _firestore
+        .collection('users')
+        .doc(currentUser)
+        .collection('recieved')
+        .doc(requestID)
+        .delete();
+
+    //Delete from pending
+    await _firestore
+        .collection('users')
+        .doc(friendID)
+        .collection('pending')
+        .doc(requestID)
+        .delete();
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> getRequests(
