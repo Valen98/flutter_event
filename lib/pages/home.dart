@@ -2,6 +2,7 @@ import 'package:event/components/event_card.dart';
 import 'package:event/components/my_app_bar.dart';
 import 'package:event/components/my_navigation_bar.dart';
 import 'package:event/pages/event/new_event.dart';
+import 'package:event/pages/notification.dart';
 import 'package:event/pages/profile.dart';
 import 'package:event/pages/search.dart';
 import 'package:event/services/event/event_service.dart';
@@ -63,10 +64,11 @@ class _HomePageState extends State<HomePage> {
   Widget home() {
     return Scaffold(
       appBar: MyAppBar(
-        onPressed: () => addEvent(),
+        onPressed: () => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const NotificationPage())),
         title: "Event App",
         icon: const Icon(
-          Icons.add,
+          Icons.notifications_outlined,
         ),
       ),
       body: _builderEventList(),

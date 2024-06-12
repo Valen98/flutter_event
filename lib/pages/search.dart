@@ -73,7 +73,8 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void addFriend(String recieverID) {
-    _userService.addFriend(recieverID, _auth.currentUser!.uid);
+    _userService.friendRequest(
+        recieverID, _auth.currentUser!.uid, "friendRequest");
     setState(() {
       iconVisible = false;
     });
@@ -124,7 +125,7 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                   )
                                 : const Text(
-                                    "Friend added",
+                                    "Friend Request Sent",
                                     style: TextStyle(
                                         color: Colors.grey, fontSize: 12),
                                   ),

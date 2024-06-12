@@ -20,7 +20,8 @@ class _PublicProfilePageState extends State<PublicProfilePage> {
   late DocumentSnapshot data;
 
   void addFriend(String recieverID) {
-    _userService.addFriend(recieverID, _auth.currentUser!.uid);
+    _userService.friendRequest(
+        recieverID, _auth.currentUser!.uid, "friendRequest");
   }
 
   @override

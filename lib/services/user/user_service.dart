@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event/model/request.dart';
 import 'package:flutter/material.dart';
 
 class UserService extends ChangeNotifier {
@@ -44,14 +45,51 @@ class UserService extends ChangeNotifier {
     return _firestore.collection('users').get();
   }
 
-  Future<void> addFriend(String recieverID, String senderID) async {
+  Future<void> friendRequest(
+      String recieverID, String senderID, String type) async {
+    //Sender
+    Request newRequest = Request(
+        sender: senderID,
+        reciever: recieverID,
+        dateTime: DateTime.now(),
+        type: type);
+
+    await _firestore
+        .collection('users')
+        .doc(senderID)
+        .collection("pending")
+        .add(newRequest.toMap());
+
+    //Reciever
+    await _firestore
+        .collection('users')
+        .doc(recieverID)
+        .collection("recieved")
+        .add(newRequest.toMap());
+
+    /*
     await _firestore.collection('users').doc(recieverID).update({
       'friends': FieldValue.arrayUnion([senderID])
     });
+    */
+  }
 
-    await _firestore.collection('users').doc(senderID).update({
-      'friends': FieldValue.arrayUnion([recieverID])
-    });
+  Future<QuerySnapshot<Map<String, dynamic>>> getRequests(
+      String currentUserID) {
+    return _firestore
+        .collection('users')
+        .doc(currentUserID)
+        .collection('recieved')
+        .get();
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getPendingRequests(
+      String currentUserID) {
+    return _firestore
+        .collection('users')
+        .doc(currentUserID)
+        .collection('pending')
+        .get();
   }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getFriendsFromID(
